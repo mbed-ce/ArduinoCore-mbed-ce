@@ -1,4 +1,4 @@
-#include "mbed_config.h"
+#include "mbed_target_config.h"
 
 #if !defined(NS_USE_EXTERNAL_MBED_TLS)
 

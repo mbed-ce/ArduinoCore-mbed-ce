@@ -3,3 +3,4 @@ cores/arduino/api*
 **/.vscode/
 **/.development
 .DS_Store
+cmake-build-*/
