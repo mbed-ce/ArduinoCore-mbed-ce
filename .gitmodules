@@ -1,0 +1,6 @@
+[submodule "extras/ArduinoCore-API"]
+	path = extras/ArduinoCore-API
+	url = https://github.com/arduino/ArduinoCore-API.git
+[submodule "mbed-os"]
+	path = mbed-os
+	url = https://github.com/mbed-ce/mbed-os.git

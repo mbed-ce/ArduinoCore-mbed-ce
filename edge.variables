@@ -1,5 +1,0 @@
-export FLAVOUR="edge"
-export VARIANTS=("EDGE_CONTROL")
-export FQBNS=("edge_control")
-export LIBRARIES=("SocketWrapper GSM GPS SPI Wire MRI USBHID USBMSD ThreadDebug Scheduler")
-export BOOTLOADERS=("EDGE_CONTROL")
