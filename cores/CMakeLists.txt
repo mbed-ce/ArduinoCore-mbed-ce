@@ -21,10 +21,7 @@ set(ARDUINO_CORE_SOURCES
 	arduino/USB/USBSerial.cpp)
 
 add_library(arduino-core STATIC ${ARDUINO_CORE_SOURCES})
-target_link_libraries(arduino-core arduino-api mbed-core-flags mbed-usb)
+target_link_libraries(arduino-core arduino-api arduino-variant mbed-core-flags mbed-rtos-flags mbed-usb)
 target_include_directories(arduino-core PUBLIC arduino)
-
-# Also pick up mbed-target-config.h
-target_include_directories(arduino-core PUBLIC ${CMAKE_SOURCE_DIR}/mbed-os)
 
 install(DIRECTORY arduino DESTINATION cores)

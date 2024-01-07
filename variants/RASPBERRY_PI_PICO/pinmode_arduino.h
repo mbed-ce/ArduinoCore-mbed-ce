@@ -20,7 +20,7 @@
 /* Rename symbol PinMode into MbedPinMode for all the file PinNamesTypes.h
  * Functions using PinMode should be redeclared with the correct PinMode symbol */
 #define PinMode MbedPinMode
-#include "mbed_config.h"
+#include "mbed-target-config.h"
 #include "PeripheralNames.h"
 #undef PinMode
 

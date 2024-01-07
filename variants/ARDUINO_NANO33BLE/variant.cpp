@@ -1,6 +1,7 @@
 #include "Arduino.h"
 #include "pinDefinitions.h"
 
+#ifdef ANALOG_CONFIG
 /* wiring_analog variables definition */
 /* Flag to indicate whether the ADC config has been changed from the default one */
 bool isAdcConfigChanged = false;
@@ -62,6 +63,7 @@ void analogAcquisitionTime(uint8_t time)
   adcCurrentConfig.acq_time = acqTime;
   analogUpdate();
 }
+#endif
 
 AnalogPinDescription g_AAnalogPinDescription[] = {
     // A0 - A7

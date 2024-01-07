@@ -5,7 +5,12 @@
 #ifndef __PINS_ARDUINO__
 #define __PINS_ARDUINO__
 
-#define ANALOG_CONFIG
+// TODO Mbed CE currently does not support the extension functionality required to allow
+// the ANALOG_CONFIG feature to work.
+// Original patch here: https://github.com/mbed-ce/ArduinoCore-mbed/blob/main/patches/0004-Add-AnalogIn-configure-function.patch
+// This patch needs to be properly integrated into Mbed as a significant API change, OR
+// the Arduino core needs to directly implement analogUpdate() using register level operations.
+//#define ANALOG_CONFIG
 
 /* Analog reference options 
  * Different possibilities available combining Reference and Gain

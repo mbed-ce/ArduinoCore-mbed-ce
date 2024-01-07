@@ -26,6 +26,8 @@
 #include "rtos/rtos.h"
 #include "platform/mbed_wait_api.h"
 
+#include "timer.h"
+
 using namespace std::chrono_literals;
 using namespace std::chrono;
 
@@ -68,12 +70,12 @@ void init()
   lowPowerTimer.start();
 }
 
-ArduinoTimer getTimer(TimerType t)
+arduino::ArduinoTimer getTimer(TimerType t)
 {
   if (t == LPTIMER) {
-    return ArduinoTimer((mbed::Timer*)(&lowPowerTimer));
+    return arduino::ArduinoTimer((mbed::Timer*)(&lowPowerTimer));
   } else {
-    return ArduinoTimer(&timer);
+    return arduino::ArduinoTimer(&timer);
   }
 }
 

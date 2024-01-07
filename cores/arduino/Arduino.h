@@ -56,12 +56,6 @@ extern "C"{
 #define NOT_A_PORT 255
 #define NOT_AN_INTERRUPT 255
 
-// undefine stdlib's abs if encountered
-#ifdef abs
-#undef abs
-#endif // abs
-#define abs(x) ((x)>0?(x):-(x))
-
 #define interrupts()        __enable_irq()
 #define noInterrupts()      __disable_irq()
 
@@ -97,7 +91,7 @@ void analogAcquisitionTime(uint8_t time);
 /* Function to reconfigure already active ADC channels */
 void analogUpdate();
 extern bool isAdcConfigChanged;
-extern analogin_config_t adcCurrentConfig;
+extern analogin_config_s adcCurrentConfig;
 
 #endif
 
