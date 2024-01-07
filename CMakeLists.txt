@@ -74,17 +74,16 @@ install(TARGETS ${MBED_LIBS_TO_INSTALL} DESTINATION "variants/${MBED_TARGET}/lib
 # ---------------------------------------------------------
 
 # Iterate though the Mbed main build target and the optional targets and collect include dirs / defines / etc.
-set(TARGETS_TO_SCAN mbed-core-flags mbed-rtos-flags ${MBED_LIBS_TO_INSTALL})
+set(TARGETS_TO_SCAN mbed-os ${MBED_LIBS_TO_INSTALL})
 set(SCANNED_INCLUDE_DIRS "")
 set(SCANNED_DEFINES "")
 foreach(TARGET ${TARGETS_TO_SCAN})
 	get_property(TARGET_INCLUDE_DIRS TARGET ${TARGET} PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
 	get_property(TARGET_COMPILE_DEFINITIONS TARGET ${TARGET} PROPERTY INTERFACE_COMPILE_DEFINITIONS)
 
-	# For include dirs, we want to filter them out if they point to the mbed-os/TARGETS folder, since that is not public API.
-	# Additionally, if the include dir points to generated-headers, that's in the bin dir so we will handle it separately.
+	# For include dirs, if the include dir points to generated-headers, that's in the bin dir so we will handle it separately.
 	foreach(INCLUDE_DIR ${TARGET_INCLUDE_DIRS})
-		if((NOT ${INCLUDE_DIR} MATCHES "mbed-os/targets") AND (NOT "${INCLUDE_DIR}" MATCHES "generated-headers"))
+		if(NOT "${INCLUDE_DIR}" MATCHES "generated-headers")
 			list(APPEND SCANNED_INCLUDE_DIRS ${INCLUDE_DIR})
 		endif()
 	endforeach()
