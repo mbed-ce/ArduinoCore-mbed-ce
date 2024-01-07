@@ -33,6 +33,7 @@ add_library(mbed-os-static)
 target_link_libraries(mbed-os-static mbed-os)
 install(TARGETS mbed-os-static DESTINATION "variants/${MBED_TARGET}/libs")
 
+# List of additional libraries to install and use for this target
 set(MBED_LIBS_TO_INSTALL
 	mbed-lwipstack
 	mbed-netsocket-api
@@ -51,6 +52,17 @@ set(MBED_LIBS_TO_INSTALL
 	mbed-usb-cdc-ecm
 	mbed-usb-msd
 )
+
+# We also need to know about any precompiled .a files
+# under variants/xxx/libs
+if("ARDUINO_NANO33BLE" IN_LIST MBED_TARGET_LABELS)
+	set(ARDUINO_PRECOMPILED_A_FILES
+		libcc_310_core.a
+		libcc_310_ext.a
+		libcc_310_trng.a)
+else()
+	set(ARDUINO_PRECOMPILED_A_FILES "")
+endif()
 
 # Minor hack: all of the Mbed optional libraries are marked as EXCLUDE_FROM_ALL, so they won't get built during the build
 # phase, so it will error when trying to install them.  To fix this, mark them as dependencies of a target that is in ALL.
@@ -123,6 +135,7 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mbed-os/mbed-target-config.h DESTINATI
 
 # Build subdirs
 # ---------------------------------------------------------
+add_subdirectory(ide-config-files)
 add_subdirectory(extras)
 add_subdirectory(variants)
 add_subdirectory(cores)

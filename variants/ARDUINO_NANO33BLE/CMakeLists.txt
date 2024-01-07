@@ -1,9 +1,9 @@
 # Install prebuilt libraries
-install(FILES
-	libs/libcc_310_core.a
-	libs/libcc_310_ext.a
-	libs/libcc_310_trng.a
-	DESTINATION variants/${MBED_TARGET}/libs)
+foreach(LIB_FILE ${ARDUINO_PRECOMPILED_A_FILES})
+	install(FILES
+		libs/${LIB_FILE}
+		DESTINATION variants/${MBED_TARGET}/libs)
+endforeach()
 
 # Build and install variant-specific sources
 set(VARIANT_SOURCES
