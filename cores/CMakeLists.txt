@@ -25,3 +25,11 @@ target_link_libraries(arduino-core arduino-api arduino-variant mbed-core-flags m
 target_include_directories(arduino-core PUBLIC arduino)
 
 install(DIRECTORY arduino DESTINATION cores)
+
+# The Arduino IDE adds an arch define based on the target, and this gets used in
+# the build of some of the libraries
+if("RASPBERRY_PI_PICO" IN_LIST MBED_TARGET_LABELS)
+	target_compile_definitions(arduino-core PUBLIC ARDUINO_ARCH_RP2040)
+elseif("ARDUINO_NANO33BLE" IN_LIST MBED_TARGET_LABELS)
+	target_compile_definitions(arduino-core PUBLIC ARDUINO_ARCH_NRF52840)
+endif()

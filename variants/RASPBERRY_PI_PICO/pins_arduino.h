@@ -87,4 +87,10 @@ void _ontouch1200bps_();
 
 #define USB_MAX_POWER	(500)
 
+// PDM Interface
+// ---------------
+// On Nano RP2040 Connect, the PDM microphone is connected to these pins
+#define PIN_PDM_CLK	 (23)
+#define PIN_PDM_DIN	 (22)
+
 #endif //__PINS_ARDUINO__

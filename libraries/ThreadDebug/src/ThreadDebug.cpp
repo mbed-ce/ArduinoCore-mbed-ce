@@ -91,7 +91,7 @@ static const char* g_threadNamesToIgnore[] = {
     }
 
 
-
+namespace arduino {
 
 // If non-NULL, this is the thread that we want to single step.
 // If NULL, single stepping is not enabled.
@@ -1243,4 +1243,6 @@ void DebugSerial::end()
 
 
 // Instantiate the single instance of this stream.
-class DebugSerial arduino::DebugSerial;
+class DebugSerial DebugSerial;
+
+}

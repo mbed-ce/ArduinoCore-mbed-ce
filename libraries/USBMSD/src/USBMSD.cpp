@@ -68,15 +68,15 @@ enum Status {
 };
 
 USBMSD::USBMSD(mbed::BlockDevice *bd, bool connect_blocking, uint16_t vendor_id, uint16_t product_id, uint16_t product_release)
-    : arduino::internal::PluggableUSBModule(1), _in_task(&_queue), _out_task(&_queue),
-      _initialized(false), _media_removed(false), _bd(bd)
+    : arduino::internal::PluggableUSBModule(1), _initialized(false), _media_removed(false), _in_task(&_queue), _out_task(&_queue),
+       _bd(bd)
 {
     PluggableUSBD().plug(this);
 }
 
 USBMSD::USBMSD(USBPhy *phy, mbed::BlockDevice *bd, uint16_t vendor_id, uint16_t product_id, uint16_t product_release)
-    : arduino::internal::PluggableUSBModule(1), _in_task(&_queue), _out_task(&_queue),
-      _initialized(false), _media_removed(false), _bd(bd)
+    : arduino::internal::PluggableUSBModule(1), _initialized(false), _media_removed(false), _in_task(&_queue), _out_task(&_queue),
+       _bd(bd)
 {
     PluggableUSBD().plug(this);
 }

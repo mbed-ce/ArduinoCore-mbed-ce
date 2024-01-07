@@ -49,12 +49,12 @@ PDMClass::PDMClass(int dinPin, int clkPin, int pwrPin) :
   _dinPin(dinPin),
   _clkPin(clkPin),
   _pwrPin(pwrPin),
-  _onReceive(NULL),
-  _gain(-1),
   _channels(-1),
   _samplerate(-1),
+  _gain(-1),
   _init(-1),
-  _cutSamples(100)
+  _cutSamples(100),
+  _onReceive(NULL)
 {
 }
 
@@ -148,7 +148,7 @@ int PDMClass::begin(int channels, int sampleRate)
 
 void PDMClass::end()
 {
-  NVIC_DisableIRQ(DMA_IRQ_0n);
+  dma_channel_set_irq0_enabled(dmaChannel, false);
   pio_remove_program(pio, &pdm_pio_program, offset);
   dma_channel_abort(dmaChannel);
   pinMode(_clkPin, INPUT);
@@ -159,17 +159,17 @@ void PDMClass::end()
 
 int PDMClass::available()
 {
-  NVIC_DisableIRQ(DMA_IRQ_0n);
+  dma_channel_set_irq0_enabled(dmaChannel, false);
   size_t avail = _doubleBuffer.available();
-  NVIC_EnableIRQ(DMA_IRQ_0n);
+  dma_channel_set_irq0_enabled(dmaChannel, true);
   return avail;
 }
 
 int PDMClass::read(void* buffer, size_t size)
 {
-  NVIC_DisableIRQ(DMA_IRQ_0n);
+  dma_channel_set_irq0_enabled(dmaChannel, false);
   int read = _doubleBuffer.read(buffer, size);
-  NVIC_EnableIRQ(DMA_IRQ_0n);
+  dma_channel_set_irq0_enabled(dmaChannel, true);
   return read;
 }
 

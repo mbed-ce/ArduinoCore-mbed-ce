@@ -24,14 +24,17 @@
 #define FLAG_DISCONNECT     (1 << 1)
 #define FLAG_CONNECT        (1 << 2)
 
+namespace arduino
+{
+
 USBMIDI::USBMIDI(bool connect_blocking, uint16_t vendor_id, uint16_t product_id, uint16_t product_release)
-    : internal::PluggableUSBModule(2)
+        : internal::PluggableUSBModule(2)
 {
     PluggableUSBD().plug(this);
 }
 
 USBMIDI::USBMIDI(USBPhy *phy, uint16_t vendor_id, uint16_t product_id, uint16_t product_release)
-    : internal::PluggableUSBModule(2)
+        : internal::PluggableUSBModule(2)
 {
     PluggableUSBD().plug(this);
     // User or child responsible for calling connect or init
@@ -42,7 +45,7 @@ USBMIDI::~USBMIDI()
     PluggableUSBD().deinit();
 }
 
-void USBMIDI::init(EndpointResolver& resolver)
+void USBMIDI::init(EndpointResolver &resolver)
 {
     _bulk_buf_pos = 0;
     _bulk_buf_size = 0;
@@ -72,17 +75,23 @@ bool USBMIDI::write(MIDIMessage m)
 
     bool ret = true;
     // first byte keeped for retro-compatibility
-    for (int p = 1; p < m.length; p += 3) {
+    for (int p = 1; p < m.length; p += 3)
+    {
         uint8_t buf[4];
         // Midi message to USBMidi event packet
         buf[0] = m.data[1] >> 4;
         // SysEx
-        if (buf[0] == 0xF) {
-            if ((m.length - p) > 3) {
+        if (buf[0] == 0xF)
+        {
+            if ((m.length - p) > 3)
+            {
                 // SysEx start or continue
                 buf[0] = 0x4;
-            } else {
-                switch (m.length - p) {
+            }
+            else
+            {
+                switch (m.length - p)
+                {
                     case 1:
                         // SysEx end with one byte
                         buf[0] = 0x5;
@@ -100,22 +109,29 @@ bool USBMIDI::write(MIDIMessage m)
         }
         buf[1] = m.data[p];
 
-        if (p + 1 < m.length) {
+        if (p + 1 < m.length)
+        {
             buf[2] = m.data[p + 1];
-        } else {
+        }
+        else
+        {
             buf[2] = 0;
         }
 
-        if (p + 2 < m.length) {
+        if (p + 2 < m.length)
+        {
             buf[3] = m.data[p + 2];
-        } else {
+        }
+        else
+        {
             buf[3] = 0;
         }
 
         _flags.clear(FLAG_WRITE_DONE);
         write_start(_bulk_in, buf, 4);
         uint32_t flags = _flags.wait_any(FLAG_WRITE_DONE | FLAG_DISCONNECT, osWaitForever, false);
-        if (flags & FLAG_DISCONNECT) {
+        if (flags & FLAG_DISCONNECT)
+        {
             ret = false;
             break;
         }
@@ -144,7 +160,8 @@ bool USBMIDI::read(MIDIMessage *m)
     // Invalidate message
     m->length = 0;
 
-    if (!_data_ready) {
+    if (!_data_ready)
+    {
         unlock();
         return false;
     }
@@ -153,7 +170,8 @@ bool USBMIDI::read(MIDIMessage *m)
     _cur_data = 0;
     _next_message();
 
-    if (!_data_ready) {
+    if (!_data_ready)
+    {
         read_start(_bulk_out, _bulk_buf, MaxSize);
     }
 
@@ -175,16 +193,19 @@ void USBMIDI::callback_state_change(DeviceState new_state)
 {
     assert_locked();
 
-    if (new_state == USBDevice::Configured) {
+    if (new_state == USBDevice::Configured)
+    {
         _flags.set(FLAG_CONNECT);
         _flags.clear(FLAG_DISCONNECT);
-    } else {
+    }
+    else
+    {
         _flags.set(FLAG_DISCONNECT);
         _flags.clear(FLAG_CONNECT | FLAG_WRITE_DONE);
     }
 }
 
-uint32_t USBMIDI::callback_request(const setup_packet_t *setup, USBDevice::RequestResult *result, uint8_t** data)
+uint32_t USBMIDI::callback_request(const setup_packet_t *setup, USBDevice::RequestResult *result, uint8_t **data)
 {
     assert_locked();
 
@@ -192,7 +213,8 @@ uint32_t USBMIDI::callback_request(const setup_packet_t *setup, USBDevice::Reque
     uint32_t size = 0;
 
     // Process additional standard requests
-    if (setup->wIndex != pluggedInterface) {
+    if (setup->wIndex != pluggedInterface)
+    {
         return size;
     }
 
@@ -208,7 +230,8 @@ uint8_t USBMIDI::getProductVersion()
 bool USBMIDI::callback_request_xfer_done(const setup_packet_t *setup, bool aborted)
 {
     assert_locked();
-    if (setup->wIndex != pluggedInterface) {
+    if (setup->wIndex != pluggedInterface)
+    {
         return false;
     }
     return true;
@@ -218,12 +241,14 @@ bool USBMIDI::callback_set_configuration(uint8_t configuration)
 {
     assert_locked();
 
-    if (configuration == DEFAULT_CONFIGURATION) {
+    if (configuration == DEFAULT_CONFIGURATION)
+    {
         //complete_set_configuration(false);
     }
 
     PluggableUSBD().endpoint_add(_bulk_in, MaxSize, USB_EP_TYPE_BULK, mbed::callback(this, &USBMIDI::_in_callback));
-    PluggableUSBD().endpoint_add(_bulk_out, MaxSize, USB_EP_TYPE_BULK, mbed::callback(this, &USBMIDI::_out_callback));
+    PluggableUSBD().endpoint_add(_bulk_out, MaxSize, USB_EP_TYPE_BULK,
+                                 mbed::callback(this, &USBMIDI::_out_callback));
 
     read_start(_bulk_out, _bulk_buf, MaxSize);
 
@@ -241,9 +266,9 @@ void USBMIDI::callback_set_interface(uint16_t interface, uint8_t alternate)
 const uint8_t *USBMIDI::string_iinterface_desc()
 {
     static const uint8_t string_iinterface_descriptor[] = {
-        0x0c,                           //bLength
-        STRING_DESCRIPTOR,              //bDescriptorType 0x03
-        'A', 0, 'u', 0, 'd', 0, 'i', 0, 'o', 0 //bString iInterface - Audio
+            0x0c,                           //bLength
+            STRING_DESCRIPTOR,              //bDescriptorType 0x03
+            'A', 0, 'u', 0, 'd', 0, 'i', 0, 'o', 0 //bString iInterface - Audio
     };
     return string_iinterface_descriptor;
 }
@@ -251,62 +276,65 @@ const uint8_t *USBMIDI::string_iinterface_desc()
 const uint8_t *USBMIDI::string_iproduct_desc()
 {
     static const uint8_t string_iproduct_descriptor[] = {
-        0x16,                                                       //bLength
-        STRING_DESCRIPTOR,                                          //bDescriptorType 0x03
-        'M', 0, 'b', 0, 'e', 0, 'd', 0, ' ', 0, 'A', 0, 'u', 0, 'd', 0, 'i', 0, 'o', 0 //bString iProduct - Mbed Audio
+            0x16,                                                       //bLength
+            STRING_DESCRIPTOR,                                          //bDescriptorType 0x03
+            'M', 0, 'b', 0, 'e', 0, 'd', 0, ' ', 0, 'A', 0, 'u', 0, 'd', 0, 'i', 0, 'o',
+            0 //bString iProduct - Mbed Audio
     };
     return string_iproduct_descriptor;
 }
 
 const uint8_t *USBMIDI::configuration_desc(uint8_t index)
 {
-    if (index != 0) {
+    if (index != 0)
+    {
         return NULL;
     }
 
     uint8_t config_descriptor_temp[] = {
-        // configuration descriptor
-        0x09, 0x02, 0x65, 0x00, 0x02, 0x01, 0x00, 0xc0, 0x50,
+            // configuration descriptor
+            0x09, 0x02, 0x65, 0x00, 0x02, 0x01, 0x00, 0xc0, 0x50,
 
-        // The Audio Interface Collection
-        0x09, 0x04, pluggedInterface, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, // Standard AC Interface Descriptor
-        0x09, 0x24, 0x01, 0x00, 0x01, 0x09, 0x00, 0x01, 0x01, // Class-specific AC Interface Descriptor
-        0x09, 0x04, pluggedInterface+1, 0x00, 0x02, 0x01, 0x03, 0x00, 0x00, // MIDIStreaming Interface Descriptors
-        0x07, 0x24, 0x01, 0x00, 0x01, 0x41, 0x00,             // Class-Specific MS Interface Header Descriptor
+            // The Audio Interface Collection
+            0x09, 0x04, pluggedInterface, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, // Standard AC Interface Descriptor
+            0x09, 0x24, 0x01, 0x00, 0x01, 0x09, 0x00, 0x01, 0x01, // Class-specific AC Interface Descriptor
+            0x09, 0x04, pluggedInterface + 1, 0x00, 0x02, 0x01, 0x03, 0x00,
+            0x00, // MIDIStreaming Interface Descriptors
+            0x07, 0x24, 0x01, 0x00, 0x01, 0x41, 0x00,             // Class-Specific MS Interface Header Descriptor
 
-        // MIDI IN JACKS
-        0x06, 0x24, 0x02, 0x01, 0x01, 0x00,
-        0x06, 0x24, 0x02, 0x02, 0x02, 0x00,
+            // MIDI IN JACKS
+            0x06, 0x24, 0x02, 0x01, 0x01, 0x00,
+            0x06, 0x24, 0x02, 0x02, 0x02, 0x00,
 
-        // MIDI OUT JACKS
-        0x09, 0x24, 0x03, 0x01, 0x03, 0x01, 0x02, 0x01, 0x00,
-        0x09, 0x24, 0x03, 0x02, 0x06, 0x01, 0x01, 0x01, 0x00,
+            // MIDI OUT JACKS
+            0x09, 0x24, 0x03, 0x01, 0x03, 0x01, 0x02, 0x01, 0x00,
+            0x09, 0x24, 0x03, 0x02, 0x06, 0x01, 0x01, 0x01, 0x00,
 
-        // OUT endpoint - Standard MS Bulk Data Endpoint Descriptor
-        0x09,       // bLength
-        0x05,       // bDescriptorType
-        _bulk_out,   // bEndpointAddress
-        0x02,       // bmAttributes
-        0x40,       // wMaxPacketSize (LSB)
-        0x00,       // wMaxPacketSize (MSB)
-        0x00,       // bInterval (milliseconds)
-        0x00,       // bRefresh
-        0x00,       // bSynchAddress
+            // OUT endpoint - Standard MS Bulk Data Endpoint Descriptor
+            0x09,       // bLength
+            0x05,       // bDescriptorType
+            _bulk_out,   // bEndpointAddress
+            0x02,       // bmAttributes
+            0x40,       // wMaxPacketSize (LSB)
+            0x00,       // wMaxPacketSize (MSB)
+            0x00,       // bInterval (milliseconds)
+            0x00,       // bRefresh
+            0x00,       // bSynchAddress
 
-        0x05, 0x25, 0x01, 0x01, 0x01,
+            0x05, 0x25, 0x01, 0x01, 0x01,
 
-        // IN endpoint - Standard MS Bulk Data Endpoint Descriptor
-        0x09,       // bLength
-        0x05,       // bDescriptorType
-        _bulk_in,  // bEndpointAddress
-        0x02,       // bmAttributes
-        0x40,       // wMaxPacketSize (LSB)
-        0x00,       // wMaxPacketSize (MSB)
-        0x00,       // bInterval (milliseconds)
-        0x00,       // bRefresh
-        0x00,       // bSynchAddress
+            // IN endpoint - Standard MS Bulk Data Endpoint Descriptor
+            0x09,       // bLength
+            0x05,       // bDescriptorType
+            _bulk_in,  // bEndpointAddress
+            0x02,       // bmAttributes
+            0x40,       // wMaxPacketSize (LSB)
+            0x00,       // wMaxPacketSize (MSB)
+            0x00,       // bInterval (milliseconds)
+            0x00,       // bRefresh
+            0x00,       // bSynchAddress
 
-        0x05, 0x25, 0x01, 0x01, 0x03,
+            0x05, 0x25, 0x01, 0x01, 0x03,
     };
     MBED_ASSERT(sizeof(config_descriptor_temp) == sizeof(_config_descriptor));
     memcpy(_config_descriptor, config_descriptor_temp, sizeof(config_descriptor_temp));
@@ -327,7 +355,8 @@ void USBMIDI::_out_callback()
     _bulk_buf_size = read_finish(_bulk_out);
     _bulk_buf_pos = 0;
 
-    if (_callback && _next_message()) {
+    if (_callback && _next_message())
+    {
         _callback();
         return;
     }
@@ -340,10 +369,12 @@ bool USBMIDI::_next_message()
     assert_locked();
 
     bool data_ready = false;
-    while (_bulk_buf_pos < _bulk_buf_size) {
+    while (_bulk_buf_pos < _bulk_buf_size)
+    {
         uint8_t data_read;
         bool data_end = true;
-        switch (_bulk_buf[_bulk_buf_pos]) {
+        switch (_bulk_buf[_bulk_buf_pos])
+        {
             case 0x2:
                 // Two-bytes System Common Message - undefined in USBMidi 1.0
                 data_read = 2;
@@ -379,15 +410,18 @@ bool USBMIDI::_next_message()
                 break;
         }
 
-        for (uint8_t j = 1; j < data_read + 1; j++) {
-            if (_cur_data < sizeof(_data)) {
+        for (uint8_t j = 1; j < data_read + 1; j++)
+        {
+            if (_cur_data < sizeof(_data))
+            {
                 _data[_cur_data] = _bulk_buf[_bulk_buf_pos + j];
             }
             _cur_data++;
         }
         _bulk_buf_pos += 4;
 
-        if (data_end) {
+        if (data_end)
+        {
             // Message is ready to be read
             data_ready = true;
             break;
@@ -396,4 +430,6 @@ bool USBMIDI::_next_message()
 
     _data_ready = data_ready;
     return data_ready;
+}
+
 }
