@@ -34,6 +34,12 @@
     },
     "ARDUINO_NANO33BLE": {
       "cordio.max-connections": 5,
+    },
+    "RASPBERRY_PI_PICO": {
+      // This allows use of Mbed TLS even on RP2040 which does not have a cryptographic RNG.
+      // Application author is expected to provide overrides for reading & writing the seed:
+      // https://github.com/arduino/ArduinoCore-mbed/pull/445/files
+      "mbedtls.entropy-nv-seed": 1
     }
   }
 }

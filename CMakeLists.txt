@@ -33,10 +33,16 @@ add_library(mbed-os-static)
 target_link_libraries(mbed-os-static mbed-os)
 install(TARGETS mbed-os-static DESTINATION "variants/${MBED_TARGET}/libs")
 
-# List of additional libraries to install and use for this target
+# List of additional libraries to install and use for the Arduino core.
+# Every library used by each driver/example must be on this list or it won't get installed.
 set(MBED_LIBS_TO_INSTALL
+
+	# Networking
 	mbed-lwipstack
 	mbed-netsocket-api
+	mbed-mbedtls
+
+	# Storage / Block Device
 	mbed-storage
 	mbed-storage-blockdevice
 	mbed-storage-flashiap
@@ -48,6 +54,8 @@ set(MBED_LIBS_TO_INSTALL
 	mbed-storage-littlefs-v2
 	mbed-storage-securestore
 	mbed-storage-tdbstore
+
+	# USB
 	mbed-usb
 	mbed-usb-cdc-ecm
 	mbed-usb-msd

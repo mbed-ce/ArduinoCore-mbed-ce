@@ -1,6 +1,11 @@
 #include "SocketHelpers.h"
+#include "utility/http_request.h"
+#include "utility/https_request.h"
 
-uint8_t* arduino::MbedSocketClass::macAddress(uint8_t* mac) {
+
+namespace arduino
+{
+uint8_t* MbedSocketClass::macAddress(uint8_t* mac) {
   const char* mac_str = getNetwork()->get_mac_address();
   for (int b = 0; b < 6; b++) {
     uint32_t tmp;
@@ -11,11 +16,11 @@ uint8_t* arduino::MbedSocketClass::macAddress(uint8_t* mac) {
   return mac;
 }
 
-String arduino::MbedSocketClass::macAddress() {
+String MbedSocketClass::macAddress() {
   return String(getNetwork()->get_mac_address());
 }
 
-int arduino::MbedSocketClass::hostByName(const char* aHostname, IPAddress& aResult) {
+int MbedSocketClass::hostByName(const char* aHostname, IPAddress& aResult) {
   SocketAddress socketAddress = SocketAddress();
   nsapi_error_t returnCode = getNetwork()->gethostbyname(aHostname, &socketAddress);
   nsapi_addr_t address = socketAddress.get_addr();
@@ -26,93 +31,88 @@ int arduino::MbedSocketClass::hostByName(const char* aHostname, IPAddress& aResu
   return returnCode == NSAPI_ERROR_OK ? 1 : 0;
 }
 
-arduino::IPAddress arduino::MbedSocketClass::localIP() {
+IPAddress MbedSocketClass::localIP() {
   SocketAddress ip;
   NetworkInterface* interface = getNetwork();
   interface->get_ip_address(&ip);
   return ipAddressFromSocketAddress(ip);
 }
 
-arduino::IPAddress arduino::MbedSocketClass::subnetMask() {
+IPAddress MbedSocketClass::subnetMask() {
   SocketAddress ip;
   NetworkInterface* interface = getNetwork();
   interface->get_netmask(&ip);
   return ipAddressFromSocketAddress(ip);
 }
 
-arduino::IPAddress arduino::MbedSocketClass::gatewayIP() {
+IPAddress MbedSocketClass::gatewayIP() {
   SocketAddress ip;
   NetworkInterface* interface = getNetwork();
   interface->get_gateway(&ip);
   return ipAddressFromSocketAddress(ip);
 }
 
-arduino::IPAddress arduino::MbedSocketClass::dnsServerIP() {
+IPAddress MbedSocketClass::dnsServerIP() {
   SocketAddress ip;
   NetworkInterface* interface = getNetwork();
   interface->get_dns_server(0, &ip, nullptr);
   return ipAddressFromSocketAddress(ip);
 }
 
-arduino::IPAddress arduino::MbedSocketClass::dnsIP(int n) {
+IPAddress MbedSocketClass::dnsIP(int n) {
   SocketAddress ip;
   NetworkInterface* interface = getNetwork();
   interface->get_dns_server(n, &ip, nullptr);
   return ipAddressFromSocketAddress(ip);
 }
 
-void arduino::MbedSocketClass::config(arduino::IPAddress local_ip) {
+void MbedSocketClass::config(IPAddress local_ip) {
   nsapi_addr_t convertedIP = { NSAPI_IPv4, { local_ip[0], local_ip[1], local_ip[2], local_ip[3] } };
   _ip = SocketAddress(convertedIP);
 }
 
-void arduino::MbedSocketClass::config(const char* local_ip) {
+void MbedSocketClass::config(const char* local_ip) {
   _ip = SocketAddress(local_ip);
 }
 
-void arduino::MbedSocketClass::config(IPAddress local_ip, IPAddress dns_server) {
+void MbedSocketClass::config(IPAddress local_ip, IPAddress dns_server) {
   config(local_ip);
   setDNS(dns_server);
 }
 
-void arduino::MbedSocketClass::config(IPAddress local_ip, IPAddress dns_server, IPAddress gateway) {
+void MbedSocketClass::config(IPAddress local_ip, IPAddress dns_server, IPAddress gateway) {
   config(local_ip, dns_server);
   nsapi_addr_t convertedGatewayIP = { NSAPI_IPv4, { gateway[0], gateway[1], gateway[2], gateway[3] } };
   _gateway = SocketAddress(convertedGatewayIP);
 }
 
-void arduino::MbedSocketClass::config(IPAddress local_ip, IPAddress dns_server, IPAddress gateway, IPAddress subnet) {
+void MbedSocketClass::config(IPAddress local_ip, IPAddress dns_server, IPAddress gateway, IPAddress subnet) {
   config(local_ip, dns_server, gateway);
   nsapi_addr_t convertedSubnetMask = { NSAPI_IPv4, { subnet[0], subnet[1], subnet[2], subnet[3] } };
   _netmask = SocketAddress(convertedSubnetMask);
 }
 
-void arduino::MbedSocketClass::setDNS(IPAddress dns_server1) {
+void MbedSocketClass::setDNS(IPAddress dns_server1) {
   nsapi_addr_t convertedDNSServer = { NSAPI_IPv4, { dns_server1[0], dns_server1[1], dns_server1[2], dns_server1[3] } };
   _dnsServer1 = SocketAddress(convertedDNSServer);
 }
 
-void arduino::MbedSocketClass::setDNS(IPAddress dns_server1, IPAddress dns_server2) {
+void MbedSocketClass::setDNS(IPAddress dns_server1, IPAddress dns_server2) {
   setDNS(dns_server1);
   nsapi_addr_t convertedDNSServer2 = { NSAPI_IPv4, { dns_server2[0], dns_server2[1], dns_server2[2], dns_server2[3] } };
   _dnsServer2 = SocketAddress(convertedDNSServer2);
 }
 
-arduino::IPAddress arduino::MbedSocketClass::ipAddressFromSocketAddress(SocketAddress socketAddress) {
+IPAddress MbedSocketClass::ipAddressFromSocketAddress(SocketAddress socketAddress) {
   nsapi_addr_t address = socketAddress.get_addr();
   return IPAddress(address.bytes[0], address.bytes[1], address.bytes[2], address.bytes[3]);
 }
 
-SocketAddress arduino::MbedSocketClass::socketAddressFromIpAddress(arduino::IPAddress ip, uint16_t port) {
+SocketAddress MbedSocketClass::socketAddressFromIpAddress(IPAddress ip, uint16_t port) {
   nsapi_addr_t convertedIP = { NSAPI_IPv4, { ip[0], ip[1], ip[2], ip[3] } };
   return SocketAddress(convertedIP, port);
 }
 
-
-// Download helper
-
-#include "utility/http_request.h"
-#include "utility/https_request.h"
 
 void MbedSocketClass::setFeedWatchdogFunc(voidFuncPtr func) {
   _feed_watchdog_func = func;
@@ -131,7 +131,7 @@ void MbedSocketClass::body_callback(const char* data, uint32_t data_len) {
 int MbedSocketClass::download(const char* url, const char* target_file, bool const is_https) {
   download_target = fopen(target_file, "wb");
 
-  int res = this->download(url, is_https, mbed::callback(this, &MbedSocketClass::body_callback));
+  int res = this->download(url, is_https, ::mbed::callback(this, &MbedSocketClass::body_callback));
 
   fclose(download_target);
   download_target = nullptr;
@@ -139,6 +139,7 @@ int MbedSocketClass::download(const char* url, const char* target_file, bool con
   return res;
 }
 
+// Download helper
 int MbedSocketClass::download(const char* url, bool const is_https, mbed::Callback<void(const char*, uint32_t)> cbk) {
   if(cbk == nullptr) {
     return 0; // a call back must be set
@@ -172,7 +173,7 @@ int MbedSocketClass::download(const char* url, bool const is_https, mbed::Callba
 
   // find the header containing the "Content-Length" value and return that
   header_fields = rsp->get_headers_fields();
-  for(int i=0; i<header_fields.size(); i++) {
+  for(size_t i=0; i<header_fields.size(); i++) {
 
     if(strcmp(header_fields[i]->c_str(), "Content-Length") == 0) {
       res = std::stoi(*rsp->get_headers_values()[i]);
@@ -187,4 +188,5 @@ exit:
   // this may be harmful since it can allow dangling pointers existence
 
   return res;
+}
 }
