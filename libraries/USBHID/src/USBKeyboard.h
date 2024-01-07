@@ -20,7 +20,6 @@
 
 #include "PluggableUSBHID.h"
 #include "platform/Stream.h"
-#include "PlatformMutex.h"
 
 namespace arduino {
 
@@ -233,7 +232,7 @@ private:
 
     uint8_t _configuration_descriptor[41];
     uint8_t _lock_status;
-    PlatformMutex _mutex;
+    rtos::Mutex _mutex;
 
 };
 }

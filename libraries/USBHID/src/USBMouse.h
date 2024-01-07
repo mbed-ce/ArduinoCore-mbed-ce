@@ -19,7 +19,6 @@
 #define USBMOUSE_H
 
 #include "PluggableUSBHID.h"
-#include "PlatformMutex.h"
 
 namespace arduino {
 
@@ -229,7 +228,7 @@ private:
     MOUSE_TYPE _mouse_type;
     uint8_t _button;
     uint8_t _configuration_descriptor[41];
-    PlatformMutex _mutex;
+    rtos::Mutex _mutex;
 
     bool mouse_send(int8_t x, int8_t y, uint8_t buttons, int8_t z);
 };

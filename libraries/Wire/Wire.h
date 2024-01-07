@@ -20,7 +20,7 @@
 
 #include "Arduino.h"
 #include "api/HardwareI2C.h"
-#include "Print.h"
+#include "api/Print.h"
 #include "drivers/I2C.h"
 #ifdef DEVICE_I2CSLAVE
 #include "drivers/I2CSlave.h"
@@ -76,8 +76,9 @@ private:
     PinName _sda;
     PinName _scl;
     int _address;
-    RingBufferN<256> rxBuffer;
-    uint8_t txBuffer[256];
+    static constexpr size_t BufferSize = 256;
+    RingBufferN<BufferSize> rxBuffer;
+    uint8_t txBuffer[BufferSize];
     uint32_t usedTxBuffer;
     voidFuncPtrParamInt onReceiveCb = NULL;
     voidFuncPtr onRequestCb = NULL;

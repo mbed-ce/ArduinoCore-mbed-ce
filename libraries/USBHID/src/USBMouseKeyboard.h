@@ -26,7 +26,6 @@
 #include "USBKeyboard.h"
 #include "platform/Stream.h"
 #include "PluggableUSBHID.h"
-#include "PlatformMutex.h"
 
 /**
  * USBMouseKeyboard example
@@ -237,7 +236,7 @@ private:
     MOUSE_TYPE _mouse_type;
     uint8_t _button;
     uint8_t _lock_status;
-    PlatformMutex _mutex;
+    rtos::Mutex _mutex;
 
     bool _mouse_send(int8_t x, int8_t y, uint8_t buttons, int8_t z);
 

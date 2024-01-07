@@ -92,9 +92,15 @@ uint8_t arduino::MbedI2C::endTransmission(void) {
 }
 
 size_t arduino::MbedI2C::requestFrom(uint8_t address, size_t len, bool stopBit) {
-	char buf[256];
-	int ret = master->read(address << 1, buf, len, !stopBit);
-	if (ret != 0) {
+	if(len > BufferSize)
+    {
+        return 0;
+    }
+
+    char buf[BufferSize];
+
+	auto ret = master->read(address << 1, buf, len, !stopBit);
+	if (ret != mbed::I2C::Result::ACK) {
 		return 0;
 	}
 	for (size_t i=0; i<len; i++) {
@@ -108,13 +114,13 @@ size_t arduino::MbedI2C::requestFrom(uint8_t address, size_t len) {
 }
 
 size_t arduino::MbedI2C::write(uint8_t data) {
-	if (usedTxBuffer == 256) return 0;
+	if (usedTxBuffer == BufferSize) return 0;
 	txBuffer[usedTxBuffer++] = data;
 	return 1;
 }
 
 size_t arduino::MbedI2C::write(const uint8_t* data, int len) {
-	if (usedTxBuffer + len > 256) len = 256 - usedTxBuffer;
+	if (usedTxBuffer + len > BufferSize) len = BufferSize - usedTxBuffer;
 	memcpy(txBuffer + usedTxBuffer, data, len);
 	usedTxBuffer += len;
 	return len;

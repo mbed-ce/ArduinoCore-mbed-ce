@@ -140,5 +140,6 @@ add_subdirectory(extras)
 add_subdirectory(variants)
 add_subdirectory(cores)
 add_subdirectory(svd)
+add_subdirectory(libraries)
 
 mbed_finalize_build()
