@@ -74,12 +74,9 @@ public:
   int connect(IPAddress ip, uint16_t port);
   int connect(const char* host, uint16_t port);
 
-  // Note: SSL functionality is not supported on Ard
-#ifdef MBEDTLS_SSL_CLI_C
   int connectSSL(SocketAddress socketAddress);
   int connectSSL(IPAddress ip, uint16_t port);
   int connectSSL(const char* host, uint16_t port, bool disableSNI = false);
-#endif
 
   size_t write(uint8_t);
   size_t write(const uint8_t* buf, size_t size) override;

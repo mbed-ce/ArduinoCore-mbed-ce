@@ -133,7 +133,6 @@ int arduino::MbedClient::connect(const char *host, uint16_t port) {
   return connect(socketAddress);
 }
 
-#ifdef MBEDTLS_SSL_CLI_C
 int arduino::MbedClient::connectSSL(SocketAddress socketAddress) {
   if (sock == nullptr) {
     sock = new TLSSocket();
@@ -203,7 +202,6 @@ int arduino::MbedClient::connectSSL(const char *host, uint16_t port, bool disabl
   getNetwork()->gethostbyname(host, &socketAddress);
   return connectSSL(socketAddress);
 }
-#endif
 
 size_t arduino::MbedClient::write(uint8_t c) {
   return write(&c, 1);

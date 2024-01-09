@@ -122,23 +122,119 @@ endforeach()
 file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/includes.txt CONTENT ${INCLUDES_TXT_CONTENTS})
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/includes.txt DESTINATION "variants/${MBED_TARGET}")
 
+# Generate compile options files.
+foreach(LANG C CXX)
+
+	# The profile-specific compile options are set as a property on the mbed-core-flags
+	# target so they get applied everywhere.
+	# (see e.g. profiles/develop.cmake)
+	get_property(MBED_${LANG}_PROFILE_COMPILE_FLAGS TARGET mbed-core-flags PROPERTY INTERFACE_COMPILE_OPTIONS)
+
+	# Slightly janky, but we need to simulate expanding the generator expressions in this property.
+	# Use a regex to replace the generator expressions for the language we want, and then
+	# use another regex to get rid of the genexes for the other languages.
+	string(REGEX REPLACE
+		"\\$<\\$<COMPILE_LANGUAGE:${LANG}>:([^>]+)>" "\\1"
+		MBED_${LANG}_PROFILE_COMPILE_FLAGS "${MBED_${LANG}_PROFILE_COMPILE_FLAGS}")
+	string(GENEX_STRIP "${MBED_${LANG}_PROFILE_COMPILE_FLAGS}" MBED_${LANG}_PROFILE_COMPILE_FLAGS)
+
+	# For the profile flags, we want to strip out the "-include;xxx/mbed-target-config.h" flag
+	# as it contains a path specific to the build machine and isn't needed by Arduino anyway.
+	# So, remove "-include" and the option after it.
+	string(REGEX REPLACE
+		"-include;[^;]+" ""
+		MBED_${LANG}_PROFILE_COMPILE_FLAGS "${MBED_${LANG}_PROFILE_COMPILE_FLAGS}")
+
+	# for the toolchain flags (processor target, warnings, etc) those get put in CMAKE_<LANG>_FLAGS
+	# by the app.cmake toolchain file.
+	separate_arguments(CMAKE_${LANG}_FLAGS_LIST NATIVE_COMMAND ${CMAKE_${LANG}_FLAGS})
+
+	# Annoyingly, the "--std" argument won't be in these lists because it's added by CMake.
+	# We'll have to do that ourselves.
+	if(${LANG} STREQUAL "C")
+		set(C_STD_ARGUMENT --std=gnu${CMAKE_C_STANDARD})
+	else() # CXX
+		set(CXX_STD_ARGUMENT --std=gnu++${CMAKE_CXX_STANDARD})
+	endif()
+
+	set(MBED_${LANG}_COMPILE_FLAGS
+		${MBED_${LANG}_PROFILE_COMPILE_FLAGS}
+		${CMAKE_${LANG}_FLAGS_LIST}
+		${${LANG}_STD_ARGUMENT})
+
+	# Write list to a file, with one element on each line
+	list(JOIN MBED_${LANG}_COMPILE_FLAGS "\n" ${LANG}_FLAG_FILE_CONTENTS)
+	string(TOLOWER "${LANG}flags.txt" ${LANG}_FLAG_FILE_NAME)
+	file(GENERATE
+		OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${${LANG}_FLAG_FILE_NAME}
+		CONTENT "${${LANG}_FLAG_FILE_CONTENTS}")
+	install(FILES
+		${CMAKE_CURRENT_BINARY_DIR}/${${LANG}_FLAG_FILE_NAME}
+		DESTINATION variants/${MBED_TARGET})
+endforeach()
+
+# Generate linker options file
+
+# The profile-specific linker options are set as a property on the mbed-core-flags
+# target so they get applied everywhere.
+# (see e.g. profiles/develop.cmake)
+get_property(MBED_PROFILE_LINKER_FLAGS TARGET mbed-core-flags PROPERTY INTERFACE_LINK_OPTIONS)
+
+# for the toolchain flags (processor target, warnings, etc) those get put in CMAKE_<LANG>_FLAGS
+# by the app.cmake toolchain file.
+separate_arguments(CMAKE_EXE_LINKER_FLAGS_LIST NATIVE_COMMAND ${CMAKE_EXE_LINKER_FLAGS})
+
+set(MBED_LINKER_FLAGS
+	${MBED_PROFILE_LINKER_FLAGS}
+	${CMAKE_EXE_LINKER_FLAGS_LIST})
+
+# Write list to a file, with one element on each line
+list(JOIN MBED_LINKER_FLAGS "\n" LD_FLAG_FILE_CONTENTS)
+file(GENERATE
+	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/ldflags.txt
+	CONTENT "${LD_FLAG_FILE_CONTENTS}")
+install(FILES
+	${CMAKE_CURRENT_BINARY_DIR}/ldflags.txt
+	DESTINATION variants/${MBED_TARGET})
+
 # Copy sources and headers into the install dir as needed
 # ---------------------------------------------------------
 
 # Headers from Mbed.  Currently Mbed CE doesn't provide an easy way to list out the public headers, but we
-# do have the list of all the directories being included, so we can just find all the headers in those directories
+# do have the list of all the directories being included, so we can just find all the headers
+# in those directories and then install them in a matching structure
 foreach(INCLUDE_DIR ${SCANNED_INCLUDE_DIRS})
+
+	# It would be nice to just glob for "*.h".  However, there are some
+	# cases where include dirs have subfolders, and those subfolders contain include files we care about.
+	# However, we also don't want to GLOB_RECURSE, because that can go 10 levels
+	# deep and pick up loads of include files we don't need (since the top level mbed-os folder is
+	# an include dir).
+	# So, for now, we compromise and go up to 3 levels deep.  Hopefully no include file in Mbed
+	# is more than 3 levels deep from the include path.
 	file(GLOB INCLUDE_FILES ${INCLUDE_DIR}/*.h)
-	cmake_path(RELATIVE_PATH INCLUDE_DIR BASE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/mbed-os OUTPUT_VARIABLE REL_INCLUDE_DIR)
-	install(FILES ${INCLUDE_FILES} DESTINATION cores/arduino/mbed/${REL_INCLUDE_DIR})
+	file(GLOB INCLUDE_FILES_SUBDIR ${INCLUDE_DIR}/*/*.h)
+	file(GLOB INCLUDE_FILES_SUB_SUBDIR ${INCLUDE_DIR}/*/*/*.h)
+
+	foreach(FILE ${INCLUDE_FILES} ${INCLUDE_FILES_SUBDIR} ${INCLUDE_FILES_SUB_SUBDIR})
+		cmake_path(GET FILE PARENT_PATH FILE_DIRECTORY)
+		cmake_path(RELATIVE_PATH FILE_DIRECTORY BASE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/mbed-os OUTPUT_VARIABLE REL_INCLUDE_DIR)
+		install(FILES ${FILE} DESTINATION cores/arduino/mbed/${REL_INCLUDE_DIR})
+	endforeach()
 endforeach()
 
 # mstd headers need special handling since they don't end in .h
 file(GLOB MBED_MSTD_HEADERS mbed-os/platform/cxxsupport/mstd*)
+list(FILTER MBED_MSTD_HEADERS EXCLUDE REGEX ".*\\.cpp")
 install(FILES ${MBED_MSTD_HEADERS} DESTINATION cores/arduino/mbed/platform/cxxsupport)
 
 # mbed-target-config.h needs to be copied from the build folder
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mbed-os/mbed-target-config.h DESTINATION cores/arduino)
+
+# Copy linker scriot.
+# The path that the linker script is generated at is saved as a target property of mbed-os
+get_property(MBED_OS_LINKER_SCRIPT TARGET mbed-os PROPERTY LINKER_SCRIPT_PATH)
+install(FILES ${MBED_OS_LINKER_SCRIPT} DESTINATION variants/${MBED_TARGET} RENAME linker_script.ld)
 
 # Build subdirs
 # ---------------------------------------------------------

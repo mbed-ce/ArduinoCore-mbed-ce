@@ -1,4 +1,4 @@
-pico.name=Raspberry Pi Pico
+pico.name=Raspberry Pi Pico [Mbed CE]
 pico.build.core=arduino
 pico.build.crossprefix=arm-none-eabi-
 pico.build.compiler_path={runtime.tools.arm-none-eabi-gcc-7-2017q4.path}/bin/
@@ -17,7 +17,6 @@ pico.compiler.mbedce.ldflags={build.variant.path}/ldflags.txt
 pico.compiler.mbedce.cflags={build.variant.path}/cflags.txt
 pico.compiler.mbedce.cxxflags={build.variant.path}/cxxflags.txt
 pico.compiler.mbedce.includes={build.variant.path}/includes.txt
-pico.compiler.mbedce.extra_ldflags=-lstdc++ -lsupc++ -lm -lc -lgcc -lnosys
 pico.compiler.mbedce.libraries=@BOARDS_TXT_LIBRARY_LIST@
 pico.recipe.hooks.objcopy.postobjcopy.1.pattern="{runtime.tools.rp2040tools.path}/elf2uf2" "{build.path}/{build.project_name}.elf" "{build.path}/{build.project_name}.uf2"
 pico.vid.0=0x2e8a

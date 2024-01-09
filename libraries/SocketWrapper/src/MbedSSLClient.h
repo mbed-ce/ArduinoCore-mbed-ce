@@ -22,9 +22,6 @@
 
 #include "MbedClient.h"
 
-#ifdef MBEDTLS_SSL_CLI_C
-
-
 #include <BlockDevice.h>
 #include <FATFileSystem.h>
 #include <MBRBlockDevice.h>
@@ -96,6 +93,5 @@ private:
 };
 
 }
-#endif
 
 #endif /* MBEDSSLCLIENT_H */
