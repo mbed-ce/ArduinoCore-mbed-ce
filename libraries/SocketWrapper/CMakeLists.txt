@@ -14,4 +14,4 @@ target_link_libraries(arduino-SocketWrapper PUBLIC
 	mbed-storage-blockdevice)
 target_include_directories(arduino-SocketWrapper PUBLIC src)
 
-install(DIRECTORY src DESTINATION libraries/SocketWrapper)
+install(DIRECTORY . DESTINATION libraries/SocketWrapper)

@@ -14,5 +14,6 @@ add_library(arduino-USBHID STATIC ${USBHID_SOURCES})
 target_link_libraries(arduino-USBHID PUBLIC arduino-core)
 target_include_directories(arduino-USBHID PUBLIC src)
 
-install(FILES ${USBHID_HEADERS} ${USBHID_SOURCES} DESTINATION libraries/USBHID/src)
-install(DIRECTORY examples DESTINATION libraries/USBHID)
+build_arduino_examples(USBHID examples)
+
+install(DIRECTORY . DESTINATION libraries/USBHID)

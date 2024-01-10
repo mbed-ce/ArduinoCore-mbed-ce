@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-#ifndef USBMIDI_H
-#define USBMIDI_H
+#ifndef PLUGGABLE_USBMIDI_H
+#define PLUGGABLE_USBMIDI_H
 
 #include "Arduino.h"
 /* These headers are included for child class. */

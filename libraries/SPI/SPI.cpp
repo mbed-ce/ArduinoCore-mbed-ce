@@ -22,11 +22,7 @@
 
 #include "SPI.h"
 #include "pinDefinitions.h"
-#if !defined(ARDUINO_AS_MBED_LIBRARY)
-#include "drivers/SPIMaster.h"
-#else
 #include "drivers/SPI.h"
-#endif
 
 struct _mbed_spi {
   mbed::SPI* obj;

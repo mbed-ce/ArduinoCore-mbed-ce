@@ -26,6 +26,8 @@ short sampleBuffer[512];
 // Number of audio samples read
 volatile int samplesRead;
 
+void onPDMdata();
+
 void setup() {
   Serial.begin(9600);
   while (!Serial);

@@ -12,5 +12,12 @@ target_link_libraries(arduino-USBMSD PUBLIC
 	mbed-storage-flashiap)
 target_include_directories(arduino-USBMSD PUBLIC src)
 
-install(FILES ${USBMSD_HEADERS} ${USBMSD_SOURCES} DESTINATION libraries/USBMSD/src)
-install(DIRECTORY examples DESTINATION libraries/USBMSD)
+if(ARDUINO_VARIANT_NAME STREQUAL "ARDUINO_NANO33BLE")
+	build_arduino_examples(USBMSD examples/Nano33BLE_FlashMassStorage)
+endif()
+
+if("COMPONENT_QSPIF=1" IN_LIST MBED_TARGET_DEFINITIONS)
+	build_arduino_examples(USBMSD examples/Nano33BLE_FlashMassStorage)
+endif()
+
+install(DIRECTORY . DESTINATION libraries/USBMSD)

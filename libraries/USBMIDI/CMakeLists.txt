@@ -5,7 +5,8 @@ set(USBMIDI_SOURCES
 
 add_library(arduino-USBMIDI STATIC ${USBMIDI_SOURCES})
 target_link_libraries(arduino-USBMIDI PUBLIC arduino-core)
-target_include_directories(arduino-USBMIDI PUBLIC src)
+target_include_directories(arduino-USBMIDI PUBLIC .)
 
-install(FILES ${USBMIDI_HEADERS} ${USBMIDI_SOURCES} DESTINATION libraries/USBMIDI)
-install(DIRECTORY examples DESTINATION libraries/USBMIDI)
+build_arduino_examples(USBMIDI examples)
+
+install(DIRECTORY . DESTINATION libraries/USBMIDI)
