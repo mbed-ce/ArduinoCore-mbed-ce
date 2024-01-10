@@ -20,6 +20,11 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 typedef struct
 {
     char*   pStart;
@@ -76,5 +81,9 @@ int      mriBuffer_MatchesHexString(Buffer* pBuffer, const char* pString, size_t
 #define Buffer_IsNextCharEqualTo     mriBuffer_IsNextCharEqualTo
 #define Buffer_MatchesString         mriBuffer_MatchesString
 #define Buffer_MatchesHexString      mriBuffer_MatchesHexString
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* BUFFER_H_ */

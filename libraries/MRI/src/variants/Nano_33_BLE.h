@@ -16,6 +16,11 @@
 #ifndef MRI_NANO_33_BLE_H_
 #define MRI_NANO_33_BLE_H_
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 static const char g_memoryMapXml[] = "<?xml version=\"1.0\"?>"
                                      "<!DOCTYPE memory-map PUBLIC \"+//IDN gnu.org//DTD GDB Memory Map V1.0//EN\" \"http://sourceware.org/gdb/gdb-memory-map.dtd\">"
                                      "<memory-map>"
@@ -23,5 +28,9 @@ static const char g_memoryMapXml[] = "<?xml version=\"1.0\"?>"
                                      "<memory type=\"ram\" start=\"0x20000000\" length=\"0x40000\"> </memory>"
                                      "<memory type=\"ram\" start=\"0x00800000\" length=\"0x40000\"> </memory>"
                                      "</memory-map>";
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* MRI_NANO_33_BLE_H_ */

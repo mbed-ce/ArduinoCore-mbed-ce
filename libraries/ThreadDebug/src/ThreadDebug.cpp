@@ -24,18 +24,16 @@
 // Put armv7-m module into thread mode before including its header and source code.
 #define MRI_THREAD_MRI 1
 
-extern "C"
-{
-    #include <core/core.h>
-    #include <core/platforms.h>
-    #include <core/semihost.h>
-    #include <core/context.h>
-    #include <architectures/armv7-m/armv7-m.h>
-    // Source code for armv7-m module which is included here, configured for supporting thread mode debugging.
-    #include <architectures/armv7-m/armv7-m.x>
-    #include <architectures/armv7-m/debug_cm3.h>
-    #include <variants/mri_variant.h>
-}
+#include <core/core.h>
+#include <core/platforms.h>
+#include <core/semihost.h>
+#include <core/context.h>
+#include <architectures/armv7-m/armv7-m.h>
+// Source code for armv7-m module which is included here, configured for supporting thread mode debugging.
+#include <architectures/armv7-m/armv7-m.x>
+#include <architectures/armv7-m/debug_cm3.h>
+#include <variants/mri_variant.h>
+
 
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -253,7 +251,7 @@ struct ThreadList
     }
 };
 
-
+}
 
 
 // Globals that describe the ThreadDebug singleton.
@@ -292,14 +290,14 @@ static   osThreadId_t           g_mriIdleThreadId;
 
 // Addresses of the original RTX handlers for SVCall, SysTick, and PendSV when hooks to them have been inserted for
 // enabling single step.
-volatile uint32_t               mriThreadOrigSVCall;
-volatile uint32_t               mriThreadOrigSysTick;
-volatile uint32_t               mriThreadOrigPendSV;
+volatile uint32_t mriThreadOrigSVCall;
+volatile uint32_t mriThreadOrigSysTick;
+volatile uint32_t mriThreadOrigPendSV;
 // Addresses of the original fault handlers before being replaced with debugger specific ones.
-volatile uint32_t               mriThreadOrigHardFault;
-volatile uint32_t               mriThreadOrigMemManagement;
-volatile uint32_t               mriThreadOrigBusFault;
-volatile uint32_t               mriThreadOrigUsageFault;
+volatile uint32_t mriThreadOrigHardFault;
+volatile uint32_t mriThreadOrigMemManagement;
+volatile uint32_t mriThreadOrigBusFault;
+volatile uint32_t mriThreadOrigUsageFault;
 
 // Entries to track the chunks of the context in a scatter list.
 #if MRI_DEVICE_HAS_FPU
@@ -368,7 +366,7 @@ static bool isDebuggerActive();
 
 
 
-ThreadDebug::ThreadDebug(DebugCommInterface* pCommInterface, bool breakInSetup, uint32_t maxThreadCount)
+arduino::ThreadDebug::ThreadDebug(DebugCommInterface* pCommInterface, bool breakInSetup, uint32_t maxThreadCount)
 {
     if (g_pComm != NULL) {
         // Only allow 1 ThreadDebug object to be initialized.
@@ -611,7 +609,7 @@ static int justEnteredSetupCallback(void* pv)
 }
 
 
-ThreadDebug::~ThreadDebug()
+arduino::ThreadDebug::~ThreadDebug()
 {
     g_threadLists[0].free();
     g_threadLists[1].free();
@@ -1039,7 +1037,8 @@ static bool isDebuggerActive()
 }
 
 
-
+namespace arduino
+{
 
 DebugCommInterface::~DebugCommInterface()
 {

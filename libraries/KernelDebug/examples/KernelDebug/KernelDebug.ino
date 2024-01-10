@@ -11,7 +11,14 @@
 
 #include <KernelDebug.h>
 
+#if TARGET_NRF52840
+// NRF52840 based chips.  Note that the UARTs are not assigned to specific pins, but stdout should
+// get UART 0 because it's the first UART created.
+KernelDebug kernelDebug(SERIAL1_TX, SERIAL1_RX, UARTE0_UART0_IRQn, 230400, DEBUG_BREAK_IN_SETUP);
+#else
+// Portenta targets
 KernelDebug kernelDebug(SERIAL1_TX, SERIAL1_RX, USART1_IRQn, 230400, DEBUG_BREAK_IN_SETUP);
+#endif
 
 void setup() {
 

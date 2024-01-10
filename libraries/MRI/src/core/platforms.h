@@ -23,6 +23,11 @@
 #include <core/buffer.h>
 #include <core/try_catch.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 void      mriPlatform_Init(Token* pParameterTokens);
 char*     mriPlatform_GetPacketBuffer(void);
 uint32_t  mriPlatform_GetPacketBufferSize(void);
@@ -201,5 +206,9 @@ void            mriPlatform_HandleFaultFromHighPriorityCode(void);
 #define Platform_RtosSetThreadState                         mriPlatform_RtosSetThreadState
 #define Platform_RtosRestorePrevThreadState                 mriPlatform_RtosRestorePrevThreadState
 #define Platform_HandleFaultFromHighPriorityCode            mriPlatform_HandleFaultFromHighPriorityCode
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* PLATFORMS_H_ */

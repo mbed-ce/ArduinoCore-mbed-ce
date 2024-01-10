@@ -17,6 +17,11 @@
 #ifndef CORTEXM_H_
 #define CORTEXM_H_
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 
 /* Definitions used by C and Assembler code. */
 /* In some other build systems, MRI_DEVICE_HAS_FPU won't be passed in on compiler's command line so use the
@@ -124,6 +129,9 @@ void    mriCortexMInit(Token* pParameterTokens, uint8_t debugMonPriority, IRQn_T
 void    mriCortexMSetPriority(IRQn_Type irq, uint8_t priority, uint8_t subPriority);
 uint8_t mriCortexMGetPriority(IRQn_Type irq);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* !__ASSEMBLER__ */
 

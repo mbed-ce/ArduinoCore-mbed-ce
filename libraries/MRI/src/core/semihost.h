@@ -19,6 +19,11 @@
 #include <core/platforms.h>
 #include <core/cmd_file.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 /* Real name of functions are in mri namespace. */
 int mriSemihost_IsDebuggeeMakingSemihostCall(void);
 int mriSemihost_HandleSemihostRequest(void);
@@ -32,5 +37,9 @@ int mriSemihost_HandleMbedSemihostRequest(PlatformSemihostParameters* pParameter
 #define Semihost_WriteToFileOrConsole           mriSemihost_WriteToFileOrConsole
 #define Semihost_HandleNewlibSemihostRequest    mriSemihost_HandleNewlibSemihostRequest
 #define Semihost_HandleMbedSemihostRequest      mriSemihost_HandleMbedSemihostRequest
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SEMIHOST_H_ */

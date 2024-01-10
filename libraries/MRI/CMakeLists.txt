@@ -26,7 +26,7 @@ set(MRI_SOURCES
 
 add_library(arduino-MRI STATIC ${MRI_SOURCES})
 target_link_libraries(arduino-MRI PUBLIC arduino-core)
+
 target_include_directories(arduino-MRI PUBLIC src)
 
-install(DIRECTORY src DESTINATION libraries/MRI/)
-install(FILES library.properties DESTINATION libraries/MRI/)
+install(DIRECTORY . DESTINATION libraries/MRI)

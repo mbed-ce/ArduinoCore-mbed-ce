@@ -21,6 +21,11 @@
 #include <stdint.h>
 #include <core/buffer.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 typedef struct
 {
     uint32_t* pValues;
@@ -48,5 +53,9 @@ void     mriContext_CopyFromBuffer(MriContext* pThis, Buffer* pBuffer);
 #define Context_Set             mriContext_Set
 #define Context_CopyToBuffer    mriContext_CopyToBuffer
 #define Context_CopyFromBuffer  mriContext_CopyFromBuffer
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* CONTEXT_H_ */

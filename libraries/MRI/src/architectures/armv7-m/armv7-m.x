@@ -22,6 +22,11 @@
 #include "debug_cm3.h"
 #include "armv7-m.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 /* Bits in CFSR which indicate that stacking/unstacking fault has occurred during exception entry/exit. */
 #define CFSR_STACK_ERROR_BITS               0x00001818
 
@@ -1906,3 +1911,7 @@ static void allocateFakeFloatRegAndCallMriDebugException(void)
 }
 
 #endif /* !MRI_THREAD_MRI */
+
+#ifdef __cplusplus
+}
+#endif

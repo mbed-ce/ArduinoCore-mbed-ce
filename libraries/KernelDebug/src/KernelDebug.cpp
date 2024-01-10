@@ -23,16 +23,14 @@
 // Put armv7-m module into handler mode before including its header and source code.
 #define MRI_THREAD_MRI 0
 
-extern "C" {
-    #include <core/core.h>
-    #include <core/platforms.h>
-    #include <core/semihost.h>
-    #include <architectures/armv7-m/armv7-m.h>
-    // Source code for armv7-m module which is included here, configured for supporting kernel mode debugging.
-    #include <architectures/armv7-m/armv7-m.x>
-    #include <architectures/armv7-m/debug_cm3.h>
-    #include <variants/mri_variant.h>
-}
+#include <core/core.h>
+#include <core/platforms.h>
+#include <core/semihost.h>
+#include <architectures/armv7-m/armv7-m.h>
+// Source code for armv7-m module which is included here, configured for supporting kernel mode debugging.
+#include <architectures/armv7-m/armv7-m.x>
+#include <architectures/armv7-m/debug_cm3.h>
+#include <variants/mri_variant.h>
 
 
 // Run the DebugMonitor and UART interrupts at this priority.
@@ -209,8 +207,18 @@ void Platform_Init(Token* pParameterTokens)
 
     SystemHandlerPriorities origPriorities = getSystemHandlerPrioritiesBeforeMriModifiesThem();
 
+    // Determine highest-numbered IRQ for the current CPU.
+    // This can be found by looking at IRQn_Type in the CPU's CMSIS header.
+#if TARGET_NRF52840
+    // NRF52840 based chips.
+    constexpr IRQn_Type highestIRQ = SPIM3_IRQn;
+#else
+    // Portenta targets
+    constexpr IRQn_Type highestIRQ = WAKEUP_PIN_IRQn;
+#endif
+
     __try
-        mriCortexMInit((Token*)pParameterTokens, DEBUG_ISR_PRIORITY, WAKEUP_PIN_IRQn);
+        mriCortexMInit((Token*)pParameterTokens, DEBUG_ISR_PRIORITY, highestIRQ);
     __catch
         __rethrow;
 

@@ -20,6 +20,11 @@
 #include <stdio.h>
 #include <core/try_catch.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 /* Data Watchpoint and Trace Registers */
 typedef struct
 {
@@ -918,5 +923,8 @@ static __INLINE int has10MillisecondSysTickExpired(void)
 /*  Was the stack 8-byte aligned during auto stacking. */
 #define PSR_STACK_ALIGN     (1 << 9)
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* DEBUG_CM3_H_ */

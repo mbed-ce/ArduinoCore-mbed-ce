@@ -24,6 +24,11 @@
 
 #include <stddef.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 void* mri_memcpy(void* pDest, const void* pSrc, size_t len);
 void* mri_memset(void* pDest, int val, size_t len);
 int mri_strcmp(const char* p1, const char* p2);
@@ -31,5 +36,9 @@ int mri_strncmp(const char* p1, const char* p2, size_t len);
 size_t mri_strlen(const char* p);
 char* mri_strstr(const char* pHaystack, const char* pNeedle);
 void* mri_memmove(void* pvDest, const void* pvSrc, size_t len);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* LIBC_H_ */

@@ -18,6 +18,11 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 /* Real name of functions are in mri namespace. */
 size_t mriGdbConsole_WriteString(const char* pString);
 size_t mriGdbConsole_WriteSizedString(const char* pString, size_t length);
@@ -27,5 +32,9 @@ void mriGdbConsole_WriteHexValue(uint32_t value);
 #define WriteStringToGdbConsole      mriGdbConsole_WriteString
 #define WriteSizedStringToGdbConsole mriGdbConsole_WriteSizedString
 #define WriteHexValueToGdbConsole    mriGdbConsole_WriteHexValue
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* GDB_CONSOLE_H_ */

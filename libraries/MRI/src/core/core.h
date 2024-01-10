@@ -22,6 +22,10 @@
 #include <core/context.h>
 #include <core/mri.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 typedef struct
 {
@@ -105,5 +109,9 @@ void    mriCoreSetDebuggerHooks(MriDebuggerHookPtr pEnteringHook, MriDebuggerHoo
 #else
     #define ADDR32_TO_POINTER(X) (void*)(X)
 #endif /* _LP64 */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* CORE_H_ */
