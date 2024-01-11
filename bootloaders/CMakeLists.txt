@@ -1,0 +1,3 @@
+if("ARDUINO_NANO33BLE" IN_LIST MBED_TARGET_LABELS)
+	install(DIRECTORY nano33ble DESTINATION bootloaders/)
+endif()

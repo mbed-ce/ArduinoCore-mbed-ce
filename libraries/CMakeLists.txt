@@ -27,6 +27,7 @@ endif()
 
 
 # Libraries for all targets
+add_subdirectory(Basic)
 add_subdirectory(PDM)
 add_subdirectory(Wire)
 add_subdirectory(SPI)

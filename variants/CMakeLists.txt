@@ -1,5 +1,1 @@
-if("RP2040" IN_LIST MBED_TARGET_LABELS)
-	add_subdirectory(RASPBERRY_PI_PICO)
-elseif("ARDUINO_NANO33BLE" IN_LIST MBED_TARGET_LABELS)
-	add_subdirectory(ARDUINO_NANO33BLE)
-endif()
+add_subdirectory(${ARDUINO_VARIANT_NAME})

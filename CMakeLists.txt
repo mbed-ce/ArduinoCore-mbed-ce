@@ -15,7 +15,19 @@ project(ArduinoCore-mbed VERSION 1.0.0) # This is the version of the Mbed CE Ard
 if("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
 	message(FATAL_ERROR "Must provide a CMAKE_INSTALL_PREFIX to generate the package at.")
 endif()
-message(STATUS "Will generate Arduino core library at ${CMAKE_INSTALL_PREFIX}")
+
+# Figure out variant name.  This is generally the same as the mbed target, but we need
+# to handle a few variations (e.g. the _SWD variants of the mbed targets)
+if("ARDUINO_NANO33BLE" IN_LIST MBED_TARGET_LABELS)
+	set(ARDUINO_VARIANT_NAME "ARDUINO_NANO33BLE")
+elseif("RASPBERRY_PI_PICO" IN_LIST MBED_TARGET_LABELS)
+	set(ARDUINO_VARIANT_NAME "RASPBERRY_PI_PICO")
+else()
+	message(FATAL_ERROR "This MBED_TARGET is currently not supported by the arduino core!")
+endif()
+
+message(STATUS "Will install Arduino core for ${ARDUINO_VARIANT_NAME} at ${CMAKE_INSTALL_PREFIX}")
+
 
 # Compile and install libraries needed by Arduino
 # ---------------------------------------------------------
@@ -31,7 +43,7 @@ target_compile_definitions(mbed-core-flags INTERFACE
 # (CMake's poor support for this is why we use an object library for mbed-os in CMake)
 add_library(mbed-os-static)
 target_link_libraries(mbed-os-static mbed-os)
-install(TARGETS mbed-os-static DESTINATION "variants/${MBED_TARGET}/libs")
+install(TARGETS mbed-os-static DESTINATION "variants/${ARDUINO_VARIANT_NAME}/libs")
 
 # List of additional libraries to install and use for the Arduino core.
 # Every library used by each driver/example must be on this list or it won't get installed.
@@ -76,7 +88,7 @@ endif()
 # phase, so it will error when trying to install them.  To fix this, mark them as dependencies of a target that is in ALL.
 add_dependencies(mbed-os-static ${MBED_LIBS_TO_INSTALL})
 
-install(TARGETS ${MBED_LIBS_TO_INSTALL} DESTINATION "variants/${MBED_TARGET}/libs")
+install(TARGETS ${MBED_LIBS_TO_INSTALL} DESTINATION "variants/${ARDUINO_VARIANT_NAME}/libs")
 
 # Generate compile option files for Arduino IDE
 # ---------------------------------------------------------
@@ -107,7 +119,7 @@ foreach(DEFINE ${SCANNED_DEFINES})
 	string(APPEND DEFINES_TXT_CONTENTS "-D${DEFINE}\n")
 endforeach()
 file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/defines.txt CONTENT ${DEFINES_TXT_CONTENTS})
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/defines.txt DESTINATION "variants/${MBED_TARGET}")
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/defines.txt DESTINATION "variants/${ARDUINO_VARIANT_NAME}")
 
 # Generate includes file.
 set(INCLUDES_TXT_CONTENTS "")
@@ -120,7 +132,7 @@ foreach(INCLUDE_DIR ${SCANNED_INCLUDE_DIRS})
 	string(APPEND INCLUDES_TXT_CONTENTS "-iwithprefixbefore/mbed/${REL_INCLUDE_DIR}\n")
 endforeach()
 file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/includes.txt CONTENT ${INCLUDES_TXT_CONTENTS})
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/includes.txt DESTINATION "variants/${MBED_TARGET}")
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/includes.txt DESTINATION "variants/${ARDUINO_VARIANT_NAME}")
 
 # Generate compile options files.
 foreach(LANG C CXX)
@@ -170,7 +182,7 @@ foreach(LANG C CXX)
 		CONTENT "${${LANG}_FLAG_FILE_CONTENTS}")
 	install(FILES
 		${CMAKE_CURRENT_BINARY_DIR}/${${LANG}_FLAG_FILE_NAME}
-		DESTINATION variants/${MBED_TARGET})
+		DESTINATION variants/${ARDUINO_VARIANT_NAME})
 endforeach()
 
 # Generate linker options file
@@ -195,7 +207,7 @@ file(GENERATE
 	CONTENT "${LD_FLAG_FILE_CONTENTS}")
 install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/ldflags.txt
-	DESTINATION variants/${MBED_TARGET})
+	DESTINATION variants/${ARDUINO_VARIANT_NAME})
 
 # Copy sources and headers into the install dir as needed
 # ---------------------------------------------------------
@@ -229,15 +241,16 @@ list(FILTER MBED_MSTD_HEADERS EXCLUDE REGEX ".*\\.cpp")
 install(FILES ${MBED_MSTD_HEADERS} DESTINATION cores/arduino/mbed/platform/cxxsupport)
 
 # mbed-target-config.h needs to be copied from the build folder
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mbed-os/mbed-target-config.h DESTINATION cores/arduino)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mbed-os/generated-headers/mbed-target-config.h DESTINATION cores/arduino)
 
 # Copy linker scriot.
 # The path that the linker script is generated at is saved as a target property of mbed-os
 get_property(MBED_OS_LINKER_SCRIPT TARGET mbed-os PROPERTY LINKER_SCRIPT_PATH)
-install(FILES ${MBED_OS_LINKER_SCRIPT} DESTINATION variants/${MBED_TARGET} RENAME linker_script.ld)
+install(FILES ${MBED_OS_LINKER_SCRIPT} DESTINATION variants/${ARDUINO_VARIANT_NAME} RENAME linker_script.ld)
 
 # Build subdirs
 # ---------------------------------------------------------
+add_subdirectory(bootloaders)
 add_subdirectory(ide-config-files)
 add_subdirectory(extras)
 add_subdirectory(variants)
