@@ -24,10 +24,15 @@ jobs:
         with:
           submodules: recursive
   
-      - name: Install Dependencies
+      - name: Install Python Dependencies
         run: |
-          apt-get update
-          xargs apt-get install -y < mbed-os/tools/requirements.apt.txt
+          # Note: The Mbed container is too old to have python3-json5, but it's old enough that we can
+          # still install python packages globally.
+          # On newer Ubuntu versions, you would instead use:
+          # apt-get update
+          # xargs apt-get install -y < mbed-os/tools/requirements.apt.txt
+          
+          python3 -m pip install -r  mbed-os/tools/requirements.txt
       
       - name: Build
         run: |

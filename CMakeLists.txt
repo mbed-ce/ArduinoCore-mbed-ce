@@ -261,6 +261,7 @@ add_subdirectory(libraries)
 # Set up packaging.  We want CMake to build a zip file containing the core.
 set(CPACK_PACKAGE_NAME "ArduinoCore-mbed-ce-${ARDUINO_VARIANT_NAME}-${CMAKE_BUILD_TYPE}")
 set(CPACK_PACKAGE_VERSION ${ArduinoCore-mbed-ce_VERSION})
+set(CPACK_PACKAGE_FILE_NAME ${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION})
 
 include(CPack)
 
