@@ -262,6 +262,7 @@ add_subdirectory(libraries)
 set(CPACK_PACKAGE_NAME "ArduinoCore-mbed-ce-${ARDUINO_VARIANT_NAME}-${CMAKE_BUILD_TYPE}")
 set(CPACK_PACKAGE_VERSION ${ArduinoCore-mbed-ce_VERSION})
 set(CPACK_PACKAGE_FILE_NAME ${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION})
+set(CPACK_GENERATOR ZIP)
 
 include(CPack)
 

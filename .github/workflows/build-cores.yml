@@ -38,5 +38,6 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} -DMBED_TARGET=${{ matrix.mbed_target }} -DUPLOAD_METHOD=NONE -DCMAKE_INSTALL_PREFIX=$(pwd)/../install
+          cmake .. -GNinja -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} -DMBED_TARGET=${{ matrix.mbed_target }} -DUPLOAD_METHOD=NONE -DCMAKE_INSTALL_PREFIX=$(pwd)/../install
           ninja
+          ninja package
