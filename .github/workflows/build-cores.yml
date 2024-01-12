@@ -41,3 +41,9 @@ jobs:
           cmake .. -GNinja -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} -DMBED_TARGET=${{ matrix.mbed_target }} -DUPLOAD_METHOD=NONE -DCMAKE_INSTALL_PREFIX=$(pwd)/../install
           ninja
           ninja package
+
+      - name: Archive Core Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Arduino Core (Zip)
+          path: build/ArduinoCore-mbed-ce-*.zip
