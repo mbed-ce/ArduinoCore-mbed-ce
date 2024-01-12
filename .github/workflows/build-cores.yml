@@ -28,6 +28,7 @@ jobs:
           xargs sudo apt-get install -y < mbed-os/tools/requirements.apt.txt
       
       - name: Build
+        run: |
           mkdir build
           cd build
           cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} -DMBED_TARGET=${{ matrix.mbed_target }} -DUPLOAD_METHOD=NONE
