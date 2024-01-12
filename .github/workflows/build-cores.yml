@@ -45,5 +45,5 @@ jobs:
       - name: Archive Core Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Arduino Core (Zip)
+          name: Arduino Core ${{ matrix.mbed_target }} ${{ matrix.cmake_build_type }} (Zip)
           path: build/ArduinoCore-mbed-ce-*.zip
