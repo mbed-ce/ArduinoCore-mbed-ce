@@ -10,7 +10,7 @@ set(MBED_APP_JSON_PATH mbed_app.json5)
 include(mbed-os/tools/cmake/app.cmake)
 add_subdirectory(mbed-os)
 
-project(ArduinoCore-mbed VERSION 1.0.0) # This is the version of the Mbed CE Arduino core, not of Mbed CE
+project(ArduinoCore-mbed-ce VERSION 1.0.0) # This is the version of the Mbed CE Arduino core, not of Mbed CE
 
 if("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
 	message(FATAL_ERROR "Must provide a CMAKE_INSTALL_PREFIX to generate the package at.")
@@ -34,9 +34,9 @@ message(STATUS "Will install Arduino core for ${ARDUINO_VARIANT_NAME} at ${CMAKE
 
 # Pass in version defines for the core
 target_compile_definitions(mbed-core-flags INTERFACE
-	CORE_MAJOR=${ArduinoCore-mbed_VERSION_MAJOR}
-	CORE_MINOR=${ArduinoCore-mbed_VERSION_MINOR}
-	CORE_PATCH=${ArduinoCore-mbed_VERSION_PATCH})
+	CORE_MAJOR=${ArduinoCore-mbed-ceVERSION_MAJOR}
+	CORE_MINOR=${ArduinoCore-mbed-ceVERSION_MINOR}
+	CORE_PATCH=${ArduinoCore-mbed-ceVERSION_PATCH})
 
 # Create static library out of mbed-os
 # Note that this library MUST be linked with -Wl,--whole-archive to work.
@@ -257,5 +257,11 @@ add_subdirectory(variants)
 add_subdirectory(cores)
 add_subdirectory(svd)
 add_subdirectory(libraries)
+
+# Set up packaging.  We want CMake to build a zip file containing the core.
+set(CPACK_PACKAGE_NAME "ArduinoCore-mbed-ce-${ARDUINO_VARIANT_NAME}-${CMAKE_BUILD_TYPE}")
+set(CPACK_PACKAGE_VERSION ${ArduinoCore-mbed-ce_VERSION})
+
+include(CPack)
 
 mbed_finalize_build()

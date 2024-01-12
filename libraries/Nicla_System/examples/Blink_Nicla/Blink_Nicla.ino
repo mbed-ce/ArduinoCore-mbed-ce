@@ -28,7 +28,7 @@
   https://docs.arduino.cc/tutorials/nicla-sense-me/cheat-sheet#rgb-led
 
   More advanced users can look at the source code at:
-  https://github.com/arduino/ArduinoCore-mbed/blob/master/libraries/Nicla_System/src/Nicla_System.h 
+  https://github.com/mbed-ce/ArduinoCore-mbed-ce/blob/master/libraries/Nicla_System/src/Nicla_System.h
 
   Authors: Giulia Cioffi, Martino Facchin & Ali Jahangiri
   

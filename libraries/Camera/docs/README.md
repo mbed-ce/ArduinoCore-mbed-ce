@@ -1,6 +1,6 @@
 # Arduino Camera Library
 
-[![License](https://img.shields.io/badge/License-LGPLv3-blue.svg)](https://github.com/arduino/ArduinoCore-mbed/blob/master/libraries/Camera/LICENSE)
+[![License](https://img.shields.io/badge/License-LGPLv3-blue.svg)](https://github.com/mbed-ce/ArduinoCore-mbed-ce/blob/master/libraries/Camera/LICENSE)
 
 The Arduino camera library is a C++ library designed to capture pixels from cameras on supported Arduino products. It is currently compatible with three camera models: 
 
@@ -58,4 +58,4 @@ The API documentation can be found [here](./api.md).
 
 ## License
 
-This library is released under the [LGPLv3 license](https://github.com/arduino/ArduinoCore-mbed/blob/master/libraries/Camera/LICENSE).
+This library is released under the [LGPLv3 license](https://github.com/mbed-ce/ArduinoCore-mbed-ce/blob/master/libraries/Camera/LICENSE).
