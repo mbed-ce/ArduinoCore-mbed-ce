@@ -5,31 +5,30 @@ on:
   push:
     branches:
       - main
+jobs:
+  build_cores:
+    strategy:
+      matrix:
+        mbed_target:
+          - ARDUINO_NANO33BLE
+          - RASPBERRY_PI_PICO
+        cmake_build_type:
+          - Debug
+          - Release
 
-  strategy:
-    matrix:
-      mbed_target:
-        - ARDUINO_NANO33BLE
-        - RASPBERRY_PI_PICO
-      cmake_build_type:
-        - Debug
-        - Release
-
-  runs-on: ubuntu-latest
-  container: ghcr.io/armmbed/mbed-os-env:master-latest
-  steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Install Dependencies
-      run: |
-        sudo apt-get update
-        xargs sudo apt-get install -y < mbed-os/tools/requirements.apt.txt
-    
-    - name: Build
-        mkdir build
-        cd build
-        cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} -DMBED_TARGET=${{ matrix.mbed_target }} -DUPLOAD_METHOD=NONE
-        ninja
-
-    - name: Archive artifacts
+    runs-on: ubuntu-latest
+    container: ghcr.io/armmbed/mbed-os-env:master-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+  
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          xargs sudo apt-get install -y < mbed-os/tools/requirements.apt.txt
+      
+      - name: Build
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} -DMBED_TARGET=${{ matrix.mbed_target }} -DUPLOAD_METHOD=NONE
+          ninja
