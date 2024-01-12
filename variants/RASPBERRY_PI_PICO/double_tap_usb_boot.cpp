@@ -1,8 +1,7 @@
-extern "C" {
-    #include "pico.h"
-    #include "pico/time.h"
-    #include "pico/bootrom.h"
-}
+#include "Arduino.h"
+#include "pico.h"
+#include "pico/time.h"
+#include "pico/bootrom.h"
 #include "macros.h"
 #include "pins_arduino.h"
 
