@@ -2,10 +2,9 @@ name: Build Mbed CE Arduino Cores
 
 on:
   pull_request:
-  workflow_dispatch:
   push:
     branches:
-      - master
+      - main
 
   strategy:
     matrix:
