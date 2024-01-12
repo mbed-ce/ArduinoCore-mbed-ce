@@ -83,7 +83,7 @@ recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} {compil
 recipe.hooks.linking.prelink.1.pattern="{compiler.path}{compiler.c.elf.cmd}" -E -P -x c "{build.variant.path}/{build.ldscript}" -o "{build.path}/{build.ldscript}"
 
 ## Combine gc-sections, archives, and objects
-recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}"  "-L{build.path}" "@{compiler.mbedce.cxxflags}" {compiler.c.elf.flags} {compiler.c.elf.extra_flags} {build.extra_flags} "-T{build.path}/{build.ldscript}" "-Wl,-Map,{build.path}/{build.project_name}.map" {compiler.ldflags} -o "{build.path}/{build.project_name}.elf" {object_files} -Wl,--whole-archive "{build.path}/{archive_file}" {compiler.mbedce.libraries} -Wl,--no-whole-archive -Wl,--start-group {compiler.libraries.ldflags} -Wl,--end-group "@{compiler.mbedce.ldflags}"
+recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}"  "-L{build.path}" "@{compiler.mbedce.cxxflags}" {compiler.c.elf.flags} {compiler.c.elf.extra_flags} {build.extra_flags} "-T{build.path}/{build.ldscript}" "-Wl,-Map,{build.path}/{build.project_name}.map" {compiler.ldflags} -o "{build.path}/{build.project_name}.elf" {object_files} -Wl,--whole-archive "{build.path}/{archive_file}" -Wl,--no-whole-archive {compiler.mbedce.libraries} -Wl,--start-group {compiler.libraries.ldflags} -Wl,--end-group "@{compiler.mbedce.ldflags}"
 
 ## Create eeprom
 recipe.objcopy.eep.pattern=

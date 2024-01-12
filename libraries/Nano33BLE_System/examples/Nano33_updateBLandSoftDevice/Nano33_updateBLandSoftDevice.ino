@@ -35,6 +35,8 @@
  *  3) Run this sketch again and flash the SoftDevice.
  */
 
+#include <Arduino.h>
+
 #include "FlashIAP.h"
 #include "MBR.h"
 #include "bootloader.h"
@@ -51,6 +53,60 @@
 const unsigned int magic = 0x5f27a93d;
 
 mbed::FlashIAP flash;
+
+uint32_t getTargetBootloaderCrc() {
+  uint32_t mask = 0;
+  uint32_t crc = 0xFFFFFFFF;
+  uint32_t b = 0;
+  uint8_t bootByte = 0;
+
+  int iterations = BOOTLOADER_SIZE;
+
+  for (int i=0; i<iterations; i=i+4) {
+    b = 0;
+    for (int j=0; j<4; j++) {
+      mask = 0;
+      bootByte = nano33_bootloader_hex[i+j];
+      mask = mask + (uint32_t)bootByte;
+      mask = mask << 8*j;
+      b = b | mask;
+    }
+    crc = crc ^ b;
+  }
+  return crc;
+}
+
+uint32_t getCurrentBootloaderCrc() {
+  uint32_t b = 0;
+  uint32_t crc = 0xFFFFFFFF;
+
+  int iterations = ceil(BOOTLOADER_SIZE/4);
+
+  int addr = BOOTLOADER_ADDR;
+
+  for (int i=0; i<iterations; i++) {
+    //Read 32 bit from flash
+    flash.read(&b, addr, sizeof(b));
+    //Serial.println(b, HEX);
+    //Update crc
+    crc = crc ^ b;
+    //Update pointer
+    addr = addr + 4;
+  }
+  return crc;
+}
+
+void writeSoftDeviceLen(uint32_t address) {
+  uint32_t sd_addr = SOFTDEVICE_ADDR;
+  flash.erase(address, 16);
+  //Write flag to let Bootloader understand that SoftDevice binary must be moved
+  flash.program(&magic, address, 4);
+  //Write address where the SoftDevice binary has been written
+  flash.program(&sd_addr, address + 4, 4);
+  //Write SoftDevice binary length
+  unsigned int sd_len = Softdevice_bin_len - 4096;
+  flash.program(&sd_len, address + 8, 4);
+}
 
 bool hasLatestBootloader(){
   //Check if the CRC32 of the flashed bootloader
@@ -178,60 +234,6 @@ void setup() {
   }
 
   Serial.println("Done. You may now disconnect the board.");
-}
-
-uint32_t getTargetBootloaderCrc() {
-  uint32_t mask = 0;
-  uint32_t crc = 0xFFFFFFFF;
-  uint32_t b = 0;
-  uint8_t bootByte = 0;
-
-  int iterations = BOOTLOADER_SIZE;
-
-  for (int i=0; i<iterations; i=i+4) {
-    b = 0;
-    for (int j=0; j<4; j++) {
-      mask = 0;
-      bootByte = nano33_bootloader_hex[i+j];
-      mask = mask + (uint32_t)bootByte;
-      mask = mask << 8*j;
-      b = b | mask;
-    }
-    crc = crc ^ b;
-  }
-  return crc;
-}
-
-uint32_t getCurrentBootloaderCrc() {
-  uint32_t b = 0;
-  uint32_t crc = 0xFFFFFFFF;
-
-  int iterations = ceil(BOOTLOADER_SIZE/4);
-
-  int addr = BOOTLOADER_ADDR;
-
-  for (int i=0; i<iterations; i++) {
-    //Read 32 bit from flash
-    flash.read(&b, addr, sizeof(b));
-    //Serial.println(b, HEX);
-    //Update crc
-    crc = crc ^ b;
-    //Update pointer 
-    addr = addr + 4;
-  }
-  return crc;
-}
-
-void writeSoftDeviceLen(uint32_t address) {
-  uint32_t sd_addr = SOFTDEVICE_ADDR;
-  flash.erase(address, 16);
-  //Write flag to let Bootloader understand that SoftDevice binary must be moved
-  flash.program(&magic, address, 4);
-  //Write address where the SoftDevice binary has been written
-  flash.program(&sd_addr, address + 4, 4);
-  //Write SoftDevice binary length
-  unsigned int sd_len = Softdevice_bin_len - 4096;
-  flash.program(&sd_len, address + 8, 4);
 }
 
 void loop() {

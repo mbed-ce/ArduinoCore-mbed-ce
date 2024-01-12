@@ -1,5 +1,3 @@
-set(USBMSD_HEADERS
-	src/PluggableUSBMSD.h)
 set(USBMSD_SOURCES
 	src/Singleton.cpp
 	src/USBMSD.cpp)

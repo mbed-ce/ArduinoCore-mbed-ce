@@ -6,7 +6,7 @@
 #endif
 
 const unsigned char SFU[0x10000] __attribute__ ((section(".second_stage_ota"), used)) = {
-	#include "rp2040.h"
+	#include "rp2040-sfu-binary.h"
 };
 
 FlashIAPBlockDevice bd(XIP_BASE + 0xF00000, 0x100000);

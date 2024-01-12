@@ -23,8 +23,13 @@ if("ARDUINO_NANO33BLE" IN_LIST MBED_TARGET_LABELS)
 	add_subdirectory(MRI)
 	add_subdirectory(ThreadDebug)
 	add_subdirectory(KernelDebug)
+	add_subdirectory(Nano33BLE_System)
+	add_subdirectory(MLC)
 endif()
 
+if("RASPBERRY_PI_PICO" IN_LIST MBED_TARGET_LABELS)
+	add_subdirectory(SFU)
+endif()
 
 # Libraries for all targets
 add_subdirectory(Basic)

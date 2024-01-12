@@ -1,7 +1,7 @@
 #pragma once
 
-#include "WiFiNINA.h"
-#include "FATFileSystem.h"
+#include <mbed.h>
+#include <FATFileSystem.h>
 
 class SFU {
 public:
