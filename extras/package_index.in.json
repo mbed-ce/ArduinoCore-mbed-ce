@@ -14,12 +14,12 @@
           "architecture": "mbed_nano",
           "version": "@@VERSION@@",
           "category": "Arduino",
-          "url": "http://downloads.arduino.cc/cores/staging/%%NANO_FILENAME%%",
-          "archiveFileName": "%%NANO_FILENAME%%",
-          "checksum": "SHA-256:%%NANO_CHECKSUM%%",
-          "size": "%%NANO_SIZE%%",
+          "url": "http://downloads.arduino.cc/cores/staging/%%ARDUINO_NANO33BLE_FILENAME%%",
+          "archiveFileName": "%%ARDUINO_NANO33BLE_FILENAME%%",
+          "checksum": "SHA-256:%%ARDUINO_NANO33BLE_CHECKSUM%%",
+          "size": "%%ARDUINO_NANO33BLE_SIZE%%",
           "help": {
-            "online": "https://github.com/mbed-ce/ArduinoCore-mbed/issues"
+            "online": "https://github.com/mbed-ce/ArduinoCore-mbed-ce/issues"
           },
           "boards": [
             {
@@ -49,25 +49,20 @@
               "packager": "arduino",
               "version": "0.10.0-arduino1",
               "name": "dfu-util"
-            },
-            {
-              "packager": "arduino",
-              "version": "1.0.6",
-              "name": "rp2040tools"
             }
           ]
         },
         {
-          "name": "Arduino Mbed CE RP2040 Boards",
+          "name": "Mbed CE RP2040",
           "architecture": "mbed_rp2040",
           "version": "%%VERSION%%",
           "category": "Arduino",
-          "url": "http://downloads.arduino.cc/cores/staging/%%RP2040_FILENAME%%",
-          "archiveFileName": "%%RP2040_FILENAME%%",
-          "checksum": "SHA-256:%%RP2040_CHECKSUM%%",
-          "size": "%%RP2040_SIZE%%",
+          "url": "http://downloads.arduino.cc/cores/staging/%%RASPBERRY_PI_PICO_FILENAME%%",
+          "archiveFileName": "%%RASPBERRY_PI_PICO_FILENAME%%",
+          "checksum": "SHA-256:%%RASPBERRY_PI_PICO_CHECKSUM%%",
+          "size": "%%RASPBERRY_PI_PICO_SIZE%%",
           "help": {
-            "online": "https://github.com/mbed-ce/ArduinoCore-mbed/issues"
+            "online": "https://github.com/mbed-ce/ArduinoCore-mbed-ce/issues"
           },
           "boards": [
             {

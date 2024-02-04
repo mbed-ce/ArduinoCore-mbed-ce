@@ -12,10 +12,6 @@ add_subdirectory(mbed-os)
 
 project(ArduinoCore-mbed-ce VERSION 1.0.0) # This is the version of the Mbed CE Arduino core, not of Mbed CE
 
-if("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
-	message(FATAL_ERROR "Must provide a CMAKE_INSTALL_PREFIX to generate the package at.")
-endif()
-
 # Figure out variant name.  This is generally the same as the mbed target, but we need
 # to handle a few variations (e.g. the _SWD variants of the mbed targets)
 if("ARDUINO_NANO33BLE" IN_LIST MBED_TARGET_LABELS)
