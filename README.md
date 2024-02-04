@@ -16,4 +16,4 @@ The CMake build scripts in this repo perform two distinct functions:
 
 ## Installing the Core Locally
 
-THe easiest way to install the core locally, per [here](https://support.arduino.cc/hc/en-us/articles/360021232160-How-to-install-and-use-a-custom-core-version-in-the-IDE), is to copy it to your sketchbook directory.
+The easiest way to install the core locally, per [here](https://support.arduino.cc/hc/en-us/articles/360021232160-How-to-install-and-use-a-custom-core-version-in-the-IDE), is to copy it to your sketchbook directory.

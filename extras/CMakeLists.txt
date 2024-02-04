@@ -9,7 +9,7 @@ set(ARDUINO_API_SOURCES
 	ArduinoCore-API/api/String.cpp)
 
 add_library(arduino-api STATIC ${ARDUINO_API_SOURCES})
-target_link_libraries(arduino-api mbed-core-flags)
+target_link_libraries(arduino-api mbed-core-flags arduino-core)
 target_include_directories(arduino-api PUBLIC ArduinoCore-API)
 
 install(DIRECTORY ArduinoCore-API/api DESTINATION cores/arduino)
