@@ -10,8 +10,6 @@
  Library may be used freely and without limit only with attribution.
  
   */
-#include <mbed.h>
-#include <I2C.h>
 #include "RGBled.h"
 #include "Nicla_System.h"
 

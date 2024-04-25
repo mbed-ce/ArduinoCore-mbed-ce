@@ -1,5 +1,3 @@
-#include <mbed.h>
-#include <I2C.h>
 #include "BQ25120A.h"
 #include "Nicla_System.h"
 #include "DigitalOut.h"

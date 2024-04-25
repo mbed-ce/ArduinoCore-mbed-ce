@@ -52,13 +52,13 @@
 #define IS31FL3194_COL3_PATT3_G         0x37
 #define IS31FL3194_COL3_PATT3_B         0x38
 
-#define IS31FL3194_P1_TS_T1_Time_SET    0x19
+#define IS31FL3194_P1_T_START_T1_Time_SET    0x19
 #define IS31FL3194_P1_T2_T3_Time_SET    0x1A
 #define IS31FL3194_P1_TP_T4_Time_SET    0x1B
-#define IS31FL3194_P2_TS_T1_Time_SET    0x29
+#define IS31FL3194_P2_T_START_T1_Time_SET    0x29
 #define IS31FL3194_P2_T2_T3_Time_SET    0x2A
 #define IS31FL3194_P2_TP_T4_Time_SET    0x2B
-#define IS31FL3194_P3_TS_T1_Time_SET    0x39
+#define IS31FL3194_P3_T_START_T1_Time_SET    0x39
 #define IS31FL3194_P3_T2_T3_Time_SET    0x3A
 #define IS31FL3194_P3_TP_T4_Time_SET    0x3B
 
@@ -109,12 +109,12 @@
 #define t_8_30s 0x0F
 
 // define pattern times
-#define TS t_2_10s  // Start time
-#define T1 t_2_10s  // Rise time
-#define T2 t_1_04s  // Hold time
-#define T3 t_2_10s  // Fall time
-#define T4 t_2_10s  // Off time
-#define TP t_2_10s  // Time between pulses
+#define T_START t_2_10s  // Start time
+#define T_1 t_2_10s  // Rise time
+#define T_2 t_1_04s  // Hold time
+#define T_3 t_2_10s  // Fall time
+#define T_4 t_2_10s  // Off time
+#define T_PULSE t_2_10s  // Time between pulses
 
 // define cycle times
 #define endless 0x00

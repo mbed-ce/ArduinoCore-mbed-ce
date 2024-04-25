@@ -211,6 +211,7 @@ void UART::flush() {
 		while(!_serial->obj->writeable());
 	}
 #else
+    MBED_ASSERT(_serial->obj != nullptr); // If you hit this assert you missed Serial.begin()
 	while(!_serial->obj->writeable());
 #endif
 }
@@ -221,6 +222,7 @@ size_t UART::write(uint8_t c) {
 		return _SerialUSB.write(c);
 	}
 #endif
+    MBED_ASSERT(_serial->obj != nullptr); // If you hit this assert you missed Serial.begin()
 	while (!_serial->obj->writeable()) {}
 	int ret = _serial->obj->write(&c, 1);
 	return ret == -1 ? 0 : 1;
@@ -232,6 +234,7 @@ size_t UART::write(const uint8_t* c, size_t len) {
 		return _SerialUSB.write(c, len);
 	}
 #endif
+    MBED_ASSERT(_serial->obj != nullptr); // If you hit this assert you missed Serial.begin()
 	while (!_serial->obj->writeable()) {}
 	_serial->obj->set_blocking(true);
 	int ret = _serial->obj->write(c, len);

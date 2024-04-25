@@ -83,7 +83,7 @@ uint8_t arduino::MbedI2C::endTransmission(bool stopBit) {
 		return ret;
 	}
 	#endif
-	if (master->write(_address, (const char *) txBuffer, usedTxBuffer, !stopBit) == 0) return 0;
+	if (master->write(_address, (const char *) txBuffer, usedTxBuffer, !stopBit) == mbed::I2C::Result::ACK) return 0;
 	return 2;
 }
 

@@ -10,9 +10,6 @@
     // Disable 'using namespace mbed'
     "MBED_NO_GLOBAL_USING_DIRECTIVE=1",
 
-    // Flag to some Mbed and Arduino code that Arduino and Mbed are being used together
-    "ARDUINO_ARCH_MBED=1",
-
     "MBED_HEAP_STATS_ENABLED=1",
     "MBED_STACK_STATS_ENABLED=1",
     "MBED_MEM_TRACING_ENABLED=1",
@@ -36,6 +33,34 @@
     },
     "ARDUINO_NANO33BLE": {
       "cordio.max-connections": 5,
+    },
+    "ARDUINO_NICLA_SENSE_ME": {
+
+      // Stack sizes have to get reduced a bit so that we don't run out of RAM, as this device only has
+      // 64k available.
+      "rtos.main-thread-stack-size": 4096,
+      "rtos.thread-stack-size": 1024,
+
+      "target.macros_remove": ["CONFIG_GPIO_AS_PINRESET"],
+
+      "platform.all-stats-enabled": false,
+
+      "ble.ble-role-central": false,
+      "ble.ble-role-observer": true,
+      "ble.ble-gap-max-advertising-sets": 1,
+      "ble.ble-gap-host-max-advertising-start-commands": 1,
+      "ble.ble-gap-host-privacy-resolved-cache-size": 1,
+      "ble.ble-feature-gatt-client": false,
+      "ble.ble-feature-security": true,
+      "ble.ble-feature-secure-connections": false,
+      "ble.ble-feature-signing": false,
+      "ble.ble-feature-whitelist": false,
+      "ble.ble-feature-privacy": false,
+      "ble.ble-feature-periodic-advertising": false,
+      "ble.ble-security-database-filesystem": false,
+      "ble.ble-security-database-kvstore": false,
+      "ble.ble-gap-host-based-private-address-resolution": false,
+      "ble.ble-gap-max-advertising-reports-pending-address-resolution": false
     },
     "RASPBERRY_PI_PICO": {
       // This allows use of Mbed TLS even on RP2040 which does not have a cryptographic RNG.

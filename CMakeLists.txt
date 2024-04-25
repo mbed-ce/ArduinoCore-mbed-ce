@@ -10,7 +10,7 @@ set(MBED_APP_JSON_PATH mbed_app.json5)
 include(mbed-os/tools/cmake/app.cmake)
 add_subdirectory(mbed-os)
 
-project(ArduinoCore-mbed-ce VERSION 1.0.0) # This is the version of the Mbed CE Arduino core, not of Mbed CE
+project(ArduinoCore-mbed-ce VERSION 1.1.0) # This is the version of the Mbed CE Arduino core, not of Mbed CE
 
 # Figure out variant name.  This is generally the same as the mbed target, but we need
 # to handle a few variations (e.g. the _SWD variants of the mbed targets)
@@ -18,21 +18,27 @@ if("ARDUINO_NANO33BLE" IN_LIST MBED_TARGET_LABELS)
 	set(ARDUINO_VARIANT_NAME "ARDUINO_NANO33BLE")
 elseif("RASPBERRY_PI_PICO" IN_LIST MBED_TARGET_LABELS)
 	set(ARDUINO_VARIANT_NAME "RASPBERRY_PI_PICO")
+elseif("ARDUINO_NICLA_SENSE_ME" IN_LIST MBED_TARGET_LABELS)
+	set(ARDUINO_VARIANT_NAME "ARDUINO_NICLA_SENSE_ME")
 else()
 	message(FATAL_ERROR "This MBED_TARGET is currently not supported by the arduino core!")
 endif()
 
 message(STATUS "Will install Arduino core for ${ARDUINO_VARIANT_NAME} at ${CMAKE_INSTALL_PREFIX}")
 
-
 # Compile and install libraries needed by Arduino
 # ---------------------------------------------------------
 
 # Pass in version defines for the core
-target_compile_definitions(mbed-core-flags INTERFACE
-	CORE_MAJOR=${ArduinoCore-mbed-ceVERSION_MAJOR}
-	CORE_MINOR=${ArduinoCore-mbed-ceVERSION_MINOR}
-	CORE_PATCH=${ArduinoCore-mbed-ceVERSION_PATCH})
+target_compile_definitions(mbed-os PUBLIC
+	CORE_MAJOR=${ArduinoCore-mbed-ce_VERSION_MAJOR}
+	CORE_MINOR=${ArduinoCore-mbed-ce_VERSION_MINOR}
+	CORE_PATCH=${ArduinoCore-mbed-ce_VERSION_PATCH})
+
+# Flag to some Mbed and Arduino code that Arduino and Mbed are being used together.
+# It can't be added as a "regular" Mbed define in mbed-target.config.h because there's
+# some code in ArduinoBLE that looks for this define without including Arduino.h.
+target_compile_definitions(mbed-os PUBLIC ARDUINO_ARCH_MBED=1)
 
 # Create static library out of mbed-os
 # Note that this library MUST be linked with -Wl,--whole-archive to work.
@@ -62,12 +68,29 @@ set(MBED_LIBS_TO_INSTALL
 	mbed-storage-littlefs-v2
 	mbed-storage-securestore
 	mbed-storage-tdbstore
-
-	# USB
-	mbed-usb
-	mbed-usb-cdc-ecm
-	mbed-usb-msd
 )
+
+if("TARGET_USBDEVICE" IN_LIST MBED_TARGET_LABELS)
+	list(APPEND MBED_LIBS_TO_INSTALL
+		mbed-usb
+		mbed-usb-cdc-ecm
+		mbed-usb-msd)
+endif()
+
+if("FEATURE_BLE=1" IN_LIST MBED_TARGET_DEFINITIONS)
+
+	# Note: There are circular dependencies between the BLE libraries, so we have to list some of them twice.
+	list(APPEND MBED_LIBS_TO_INSTALL
+		mbed-ble
+		mbed-ble-cordio_ll
+		mbed-ble-cordio
+		mbed-ble
+		mbed-ble-cordio_ll
+		mbed-ble-cordio
+		mbed-ble
+		mbed-ble-cordio_ll
+		mbed-ble-cordio)
+endif()
 
 # We also need to know about any precompiled .a files
 # under variants/xxx/libs
@@ -80,17 +103,20 @@ else()
 	set(ARDUINO_PRECOMPILED_A_FILES "")
 endif()
 
+set(MBED_UNIQUE_LIBS_TO_INSTALL ${MBED_LIBS_TO_INSTALL})
+list(REMOVE_DUPLICATES MBED_UNIQUE_LIBS_TO_INSTALL)
+
 # Minor hack: all of the Mbed optional libraries are marked as EXCLUDE_FROM_ALL, so they won't get built during the build
 # phase, so it will error when trying to install them.  To fix this, mark them as dependencies of a target that is in ALL.
-add_dependencies(mbed-os-static ${MBED_LIBS_TO_INSTALL})
+add_dependencies(mbed-os-static ${MBED_UNIQUE_LIBS_TO_INSTALL})
 
-install(TARGETS ${MBED_LIBS_TO_INSTALL} DESTINATION "variants/${ARDUINO_VARIANT_NAME}/libs")
+install(TARGETS ${MBED_UNIQUE_LIBS_TO_INSTALL} DESTINATION "variants/${ARDUINO_VARIANT_NAME}/libs")
 
 # Generate compile option files for Arduino IDE
 # ---------------------------------------------------------
 
 # Iterate though the Mbed main build target and the optional targets and collect include dirs / defines / etc.
-set(TARGETS_TO_SCAN mbed-os ${MBED_LIBS_TO_INSTALL})
+set(TARGETS_TO_SCAN mbed-os ${MBED_UNIQUE_LIBS_TO_INSTALL})
 set(SCANNED_INCLUDE_DIRS "")
 set(SCANNED_DEFINES "")
 foreach(TARGET ${TARGETS_TO_SCAN})
@@ -253,6 +279,7 @@ add_subdirectory(variants)
 add_subdirectory(cores)
 add_subdirectory(svd)
 add_subdirectory(libraries)
+add_subdirectory(debugger)
 
 # Set up packaging.  We want CMake to build a zip file containing the core.
 set(CPACK_PACKAGE_NAME "ArduinoCore-mbed-ce-${ARDUINO_VARIANT_NAME}-${CMAKE_BUILD_TYPE}")

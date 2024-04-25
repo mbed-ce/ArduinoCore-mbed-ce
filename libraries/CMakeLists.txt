@@ -1,9 +1,13 @@
 
 # Create build rules for any examples found with a given examples directory
-function(build_arduino_examples LIBRARY_NAME EXAMPLES_DIR)
+function(build_arduino_examples LIBRARY_NAME EXAMPLES_DIR) # ARGN = example names to skip building
 	file(GLOB_RECURSE EXAMPLE_INO_FILES "${EXAMPLES_DIR}/*.ino")
 	foreach(EXAMPLE_FILE ${EXAMPLE_INO_FILES})
 		cmake_path(GET EXAMPLE_FILE STEM EXAMPLE_NAME)
+
+		if("${EXAMPLE_NAME}" IN_LIST ARGN)
+			continue()
+		endif()
 
 		# Create the executable, making sure that CMake knows that the .ino
 		# file is C++
@@ -25,19 +29,29 @@ if("ARDUINO_NANO33BLE" IN_LIST MBED_TARGET_LABELS)
 	add_subdirectory(KernelDebug)
 	add_subdirectory(Nano33BLE_System)
 	add_subdirectory(MLC)
+	add_subdirectory(PDM)
 endif()
 
 if("RASPBERRY_PI_PICO" IN_LIST MBED_TARGET_LABELS)
 	add_subdirectory(SFU)
+	add_subdirectory(PDM)
+endif()
+
+if("ARDUINO_NICLA_SENSE_ME" IN_LIST MBED_TARGET_LABELS)
+	add_subdirectory(Nicla_System)
+	add_subdirectory(ea_malloc)
 endif()
 
 # Libraries for all targets
 add_subdirectory(Basic)
-add_subdirectory(PDM)
 add_subdirectory(Wire)
 add_subdirectory(SPI)
 add_subdirectory(Scheduler)
-add_subdirectory(USBHID)
-add_subdirectory(USBMIDI)
-add_subdirectory(USBMSD)
+
+if("TARGET_USBDEVICE" IN_LIST MBED_TARGET_LABELS)
+	add_subdirectory(USBHID)
+	add_subdirectory(USBMIDI)
+	add_subdirectory(USBMSD)
+endif()
+
 add_subdirectory(SocketWrapper)

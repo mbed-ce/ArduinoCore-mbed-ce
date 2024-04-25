@@ -18,7 +18,10 @@
 */
 
 #include <Arduino.h>
+
+#if defined(SERIAL_CDC)
 #include <USB/PluggableUSBSerial.h>
+#endif
 
 // Declared weak in Arduino.h to allow user redefinitions.
 int atexit(void (* /*func*/ )()) { return 0; }

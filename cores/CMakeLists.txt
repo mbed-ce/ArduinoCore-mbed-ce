@@ -21,7 +21,12 @@ set(ARDUINO_CORE_SOURCES
 	arduino/USB/USBSerial.cpp)
 
 add_library(arduino-core STATIC ${ARDUINO_CORE_SOURCES})
-target_link_libraries(arduino-core arduino-api arduino-variant mbed-core-flags mbed-rtos-flags mbed-usb)
+target_link_libraries(arduino-core arduino-api arduino-variant mbed-core-flags mbed-rtos-flags)
+
+if("TARGET_USBDEVICE" IN_LIST MBED_TARGET_LABELS)
+	target_link_libraries(arduino-core mbed-usb)
+endif()
+
 target_include_directories(arduino-core PUBLIC arduino)
 
 install(DIRECTORY arduino DESTINATION cores)

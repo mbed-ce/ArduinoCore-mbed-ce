@@ -17,14 +17,21 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+
 #if ARDUINO_LIBRARY_DISCOVERY_PHASE == 1
 #define ARDUINO_LIB_DISCOVERY_PHASE
 #endif
-#if !defined(Arduino_h) && !defined(ARDUINO_LIB_DISCOVERY_PHASE)
+#if !defined(Arduino_h)
 #define Arduino_h
+
+#ifdef MBED_PINNAMES_H
+#error Must include Arduino.h before mbed.h or any other Mbed headers!  You will get compile errors
+#endif
 
 #include "pinmode_arduino.h"
 #include "api/ArduinoAPI.h"
+
+#if !defined(ARDUINO_LIB_DISCOVERY_PHASE)
 
 #if defined(__cplusplus)
 
@@ -124,4 +131,5 @@ extern ErrorSerialClass ErrorSerial;
 
 #include "macros.h"
 
-#endif
+#endif // !defined(ARDUINO_LIB_DISCOVERY_PHASE)
+#endif // !defined(Arduino_h)
