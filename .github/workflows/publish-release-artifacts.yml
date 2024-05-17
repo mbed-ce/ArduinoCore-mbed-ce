@@ -9,7 +9,6 @@ permissions:
 jobs:
   release:
     name: Create Release with Artifacts
-    needs: build_cores
     runs-on: ubuntu-latest
     steps:
       - name: Show GitHub context
