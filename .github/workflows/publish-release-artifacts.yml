@@ -19,4 +19,4 @@ jobs:
       - name: Download All Compiled Core Artifacts
         uses: dawidd6/action-download-artifact@v3
         with:
-          commit: ${{ env.GITHUB_SHA }}
+          commit: ${{ github.sha }}
