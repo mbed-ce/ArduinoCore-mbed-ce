@@ -1,0 +1,23 @@
+name: Publish Artifacts on Release
+on:
+  push:
+    tags:
+      - 'v*'
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Publish Artifacts to Release
+    needs: build_cores
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+        
+      - name: Download All Compiled Core Artifacts
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          commit: ${{ env.GITHUB_SHA }}
