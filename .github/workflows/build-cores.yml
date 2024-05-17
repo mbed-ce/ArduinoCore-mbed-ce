@@ -12,6 +12,7 @@ jobs:
         mbed_target:
           - ARDUINO_NANO33BLE
           - RASPBERRY_PI_PICO
+          - ARDUINO_NICLA_SENSE_ME
         cmake_build_type:
           - Debug
           - Release
@@ -23,17 +24,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
-  
-      - name: Install Python Dependencies
+
+      - name: Install Python Venv
         run: |
-          # Note: The Mbed container is too old to have python3-json5, but it's old enough that we can
-          # still install python packages globally.
-          # On newer Ubuntu versions, you would instead use:
-          # apt-get update
-          # xargs apt-get install -y < mbed-os/tools/requirements.apt.txt
-          
-          python3 -m pip install -r  mbed-os/tools/requirements.txt
-      
+          apt-get update
+          apt-get install -y python3-venv
+
       - name: Build
         run: |
           mkdir build

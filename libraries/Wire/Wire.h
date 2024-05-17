@@ -80,6 +80,7 @@ private:
     RingBufferN<BufferSize> rxBuffer;
     uint8_t txBuffer[BufferSize];
     uint32_t usedTxBuffer;
+    bool txBufferOverflow;
     voidFuncPtrParamInt onReceiveCb = NULL;
     voidFuncPtr onRequestCb = NULL;
 #ifdef DEVICE_I2CSLAVE

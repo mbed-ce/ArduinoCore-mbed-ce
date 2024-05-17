@@ -23,9 +23,9 @@
 #include "Wire.h"
 #include "pinDefinitions.h"
 
-arduino::MbedI2C::MbedI2C(int sda, int scl) : _sda(digitalPinToPinName(sda)), _scl(digitalPinToPinName(scl)), usedTxBuffer(0) {}
+arduino::MbedI2C::MbedI2C(int sda, int scl) : _sda(digitalPinToPinName(sda)), _scl(digitalPinToPinName(scl)), usedTxBuffer(0), txBufferOverflow(false) {}
 
-arduino::MbedI2C::MbedI2C(PinName sda, PinName scl) : _sda(sda), _scl(scl), usedTxBuffer(0) {}
+arduino::MbedI2C::MbedI2C(PinName sda, PinName scl) : _sda(sda), _scl(scl), usedTxBuffer(0), txBufferOverflow(false) {}
 
 void arduino::MbedI2C::begin() {
 	end();
@@ -72,19 +72,30 @@ void arduino::MbedI2C::setClock(uint32_t freq) {
 void arduino::MbedI2C::beginTransmission(uint8_t address) {
 	_address = address << 1;
 	usedTxBuffer = 0;
+    txBufferOverflow = false;
 }
 
 uint8_t arduino::MbedI2C::endTransmission(bool stopBit) {
-	#ifndef TARGET_PORTENTA_H7
-	if (usedTxBuffer == 0) {
-		// we are scanning, return 0 if the addresed device responds with an ACK
-		char buf[1];
-		int ret = master->read(_address, buf, 1, !stopBit);
-		return ret;
-	}
-	#endif
-	if (master->write(_address, (const char *) txBuffer, usedTxBuffer, !stopBit) == mbed::I2C::Result::ACK) return 0;
-	return 2;
+
+    mbed::I2C::Result writeResult = master->write(_address, (const char *) txBuffer, usedTxBuffer, !stopBit);
+    if (writeResult == mbed::I2C::Result::NACK) {
+        return 2; // Indicate NACK.  No way to tell if received during address or data, but assume address.
+    }
+    else if (writeResult == mbed::I2C::Result::ACK) {
+        if (txBufferOverflow) {
+            return 1;
+        }
+        else {
+           // Success
+           return 0;
+        }
+    }
+    else if (writeResult == mbed::I2C::Result::TIMEOUT) {
+        return 5; // timeout
+    }
+    else {
+        return 4; // other error
+    }
 }
 
 uint8_t arduino::MbedI2C::endTransmission(void) {
@@ -92,12 +103,9 @@ uint8_t arduino::MbedI2C::endTransmission(void) {
 }
 
 size_t arduino::MbedI2C::requestFrom(uint8_t address, size_t len, bool stopBit) {
-	if(len > BufferSize)
-    {
-        return 0;
-    }
 
     char buf[BufferSize];
+    len = min(len, sizeof(buf));
 
 	auto ret = master->read(address << 1, buf, len, !stopBit);
 	if (ret != mbed::I2C::Result::ACK) {
@@ -114,13 +122,19 @@ size_t arduino::MbedI2C::requestFrom(uint8_t address, size_t len) {
 }
 
 size_t arduino::MbedI2C::write(uint8_t data) {
-	if (usedTxBuffer == BufferSize) return 0;
+	if (usedTxBuffer == BufferSize) {
+        txBufferOverflow = true;
+        return 0;
+    }
 	txBuffer[usedTxBuffer++] = data;
 	return 1;
 }
 
 size_t arduino::MbedI2C::write(const uint8_t* data, int len) {
-	if (usedTxBuffer + len > BufferSize) len = BufferSize - usedTxBuffer;
+	if (usedTxBuffer + len > BufferSize) {
+        txBufferOverflow = true;
+        len = BufferSize - usedTxBuffer;
+    }
 	memcpy(txBuffer + usedTxBuffer, data, len);
 	usedTxBuffer += len;
 	return len;

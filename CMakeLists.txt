@@ -39,6 +39,7 @@ target_compile_definitions(mbed-os PUBLIC
 # It can't be added as a "regular" Mbed define in mbed-target.config.h because there's
 # some code in ArduinoBLE that looks for this define without including Arduino.h.
 target_compile_definitions(mbed-os PUBLIC ARDUINO_ARCH_MBED=1)
+target_compile_definitions(mbed-core-flags INTERFACE ARDUINO_ARCH_MBED=1)
 
 # Create static library out of mbed-os
 # Note that this library MUST be linked with -Wl,--whole-archive to work.
@@ -70,7 +71,7 @@ set(MBED_LIBS_TO_INSTALL
 	mbed-storage-tdbstore
 )
 
-if("TARGET_USBDEVICE" IN_LIST MBED_TARGET_LABELS)
+if("DEVICE_USBDEVICE=1" IN_LIST MBED_TARGET_DEFINITIONS)
 	list(APPEND MBED_LIBS_TO_INSTALL
 		mbed-usb
 		mbed-usb-cdc-ecm

@@ -48,7 +48,7 @@ add_subdirectory(Wire)
 add_subdirectory(SPI)
 add_subdirectory(Scheduler)
 
-if("TARGET_USBDEVICE" IN_LIST MBED_TARGET_LABELS)
+if("DEVICE_USBDEVICE=1" IN_LIST MBED_TARGET_DEFINITIONS)
 	add_subdirectory(USBHID)
 	add_subdirectory(USBMIDI)
 	add_subdirectory(USBMSD)

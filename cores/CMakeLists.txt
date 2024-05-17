@@ -23,7 +23,7 @@ set(ARDUINO_CORE_SOURCES
 add_library(arduino-core STATIC ${ARDUINO_CORE_SOURCES})
 target_link_libraries(arduino-core arduino-api arduino-variant mbed-core-flags mbed-rtos-flags)
 
-if("TARGET_USBDEVICE" IN_LIST MBED_TARGET_LABELS)
+if("DEVICE_USBDEVICE=1" IN_LIST MBED_TARGET_DEFINITIONS)
 	target_link_libraries(arduino-core mbed-usb)
 endif()
 
