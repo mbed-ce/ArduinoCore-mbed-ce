@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 #include "QSPIFBlockDevice.h"
 #include "MBRBlockDevice.h"
 #include "FATFileSystem.h"
@@ -8,7 +10,7 @@
   #error Update the WiFi firmware by uploading the sketch to the M7 core instead of the M4 core.
 #endif
 
-QSPIFBlockDevice root(QSPI_SO0, QSPI_SO1, QSPI_SO2, QSPI_SO3,  QSPI_SCK, QSPI_CS, QSPIF_POLARITY_MODE_1, 40000000);
+QSPIFBlockDevice root; // Default constructor will have correct pins thanks to Mbed OS json settings
 mbed::MBRBlockDevice wifi_data(&root, 1);
 mbed::FATFileSystem wifi_data_fs("wlan");
 
@@ -49,7 +51,7 @@ void setup() {
     Serial.println("No filesystem containing the WiFi firmware was found.");
     Serial.println("Usually that means that the WiFi firmware has not been installed yet"
                   " or was overwritten with another firmware.\n");
-    Serial.println("Formatting the filsystem to install the firmware and certificates...\n");
+    Serial.println("Formatting the filesystem to install the firmware and certificates...\n");
     err = wifi_data_fs.reformat(&wifi_data);
   }
 
@@ -149,6 +151,8 @@ void setup() {
     Serial.write(buffer, ret);
   }
   fclose(fp);
+
+  wifi_data_fs.unmount();
 
   Serial.println("\nFirmware and certificates updated!");
   Serial.println("It's now safe to reboot or disconnect your board.");

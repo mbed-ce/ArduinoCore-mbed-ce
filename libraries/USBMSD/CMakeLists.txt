@@ -15,7 +15,8 @@ if(ARDUINO_VARIANT_NAME STREQUAL "ARDUINO_NANO33BLE")
 endif()
 
 if("COMPONENT_QSPIF=1" IN_LIST MBED_TARGET_DEFINITIONS)
-	build_arduino_examples(USBMSD examples/Nano33BLE_FlashMassStorage)
+	build_arduino_examples(USBMSD examples/AccessFlashAsUSBDisk)
+	target_link_libraries(USBMSD-example-AccessFlashAsUSBDisk mbed-storage-qspif)
 endif()
 
 install(DIRECTORY . DESTINATION libraries/USBMSD)

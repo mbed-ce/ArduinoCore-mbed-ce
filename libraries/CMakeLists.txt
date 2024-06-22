@@ -42,6 +42,17 @@ if("ARDUINO_NICLA_SENSE_ME" IN_LIST MBED_TARGET_LABELS)
 	add_subdirectory(ea_malloc)
 endif()
 
+if("STM32H747_ARDUINO" IN_LIST MBED_TARGET_LABELS)
+	add_subdirectory(Portenta_SDRAM)
+	add_subdirectory(STM32H747_System)
+endif()
+
+if("ARDUINO_GIGA" IN_LIST MBED_TARGET_LABELS)
+	add_subdirectory(MRI)
+	add_subdirectory(ea_malloc)
+	add_subdirectory(PDM)
+endif()
+
 # Libraries for all targets
 add_subdirectory(Basic)
 add_subdirectory(Wire)

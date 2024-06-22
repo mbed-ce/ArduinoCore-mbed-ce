@@ -6,7 +6,6 @@
 extern RTC_HandleTypeDef RTCHandle;
 
 uint8_t STM32H747::readReg(uint8_t subAddress) {
-  char response = 0xFF;
   Wire1.beginTransmission(PMIC_ADDRESS);
   Wire1.write(subAddress);
   Wire1.endTransmission(false);
@@ -44,7 +43,6 @@ reset_reason_t STM32H747::getResetReason() {
 bool STM32H747::useInternalOscillator(bool lowspeed) {
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
 
   // If we are reconfiguring the clock, select CSI as system clock source to allow modification of the PLL configuration 
   if (__HAL_RCC_GET_PLL_OSCSOURCE() == RCC_PLLSOURCE_HSE) {
@@ -110,6 +108,8 @@ bool STM32H747::useInternalOscillator(bool lowspeed) {
   } else {
     __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
   }
+
+  SystemCoreClockUpdate();
 
   pinMode(PH_1, OUTPUT);
   digitalWrite(PH_1, LOW);

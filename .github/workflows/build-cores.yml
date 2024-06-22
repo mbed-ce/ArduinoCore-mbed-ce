@@ -13,6 +13,7 @@ jobs:
           - ARDUINO_NANO33BLE
           - RASPBERRY_PI_PICO
           - ARDUINO_NICLA_SENSE_ME
+          - ARDUINO_GIGA_CM7
         cmake_build_type:
           - Debug
           - Release

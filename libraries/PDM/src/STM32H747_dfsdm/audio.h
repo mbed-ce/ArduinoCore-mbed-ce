@@ -1,6 +1,7 @@
 #if defined(ARDUINO_NICLA_VISION) || defined(ARDUINO_GIGA)
 
 #include "stdbool.h"
+#include "stm_dma_utils.h"
 
 // DFSDM1
 
@@ -54,11 +55,14 @@ PC1      ------> DFSDM1_DATIN0
 
 #endif
 
-#define AUDIO_DFSDM1_DMA_STREAM        DMA1_Stream0
-#define AUDIO_DFSDM1_DMA_REQUEST       DMA_REQUEST_DFSDM1_FLT0
-#define AUDIO_DFSDM1_DMA_IRQ           DMA1_Stream0_IRQn
-#define AUDIO_DFSDM1_DMA_IRQHandler    DMA1_Stream0_IRQHandler
 
+// DMA channels may be muxed arbitrarily on STM32H7, so for now just pick the last one
+// so we don't collide with Mbed's DMA SPI
+static const DMALinkInfo AUDIO_DFSDM1_DMA_LINK = {
+    .dmaIdx = 2,
+    .channelIdx = 7,
+    .sourceNumber = DMA_REQUEST_DFSDM1_FLT0
+};
 
 #define AUDIO_DFSDM1_CLK_ENABLE()      __HAL_RCC_C1_DFSDM1_CLK_ENABLE()
 #define AUDIO_DFSDM1_CLK_DISABLE()     __HAL_RCC_C1_DFSDM1_CLK_DISABLE()

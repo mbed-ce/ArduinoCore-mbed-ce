@@ -35,11 +35,11 @@ PDMClass::PDMClass(int dinPin, int clkPin, int pwrPin) :
   _dinPin(dinPin),
   _clkPin(clkPin),
   _pwrPin(pwrPin),
-  _onReceive(NULL),
-  _gain(-1),
   _channels(-1),
   _samplerate(-1),
-  _init(-1)
+  _gain(-1),
+  _init(-1),
+  _onReceive(NULL)
 {
   _instance = this;
 }
@@ -116,7 +116,7 @@ size_t PDMClass::getBufferSize()
 }
 
 #define HALF_TRANSFER_SIZE  (256*_channels)
-static int g_pcmbuf_size=0;
+static size_t g_pcmbuf_size=0;
 
 void PDMClass::IrqHandler(bool halftranfer)
 {

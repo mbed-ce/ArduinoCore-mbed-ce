@@ -27,12 +27,15 @@
       "platform.all-stats-enabled": true,
       "rtos.main-thread-stack-size": 32768,
 
+      "cordio.max-connections": 5,
+
       // Don't activate Mbed's USB console support; Arduino brings its own USB console system
       "target.console-usb": false,
       "target.console-uart": true,
-    },
-    "ARDUINO_NANO33BLE": {
-      "cordio.max-connections": 5,
+
+      // Enable tracing of warnings/errors as this can help us get some better tracing when things go wrong
+      "mbed-trace.enable": true,
+      "mbed-trace.max-level": "TRACE_LEVEL_WARN"
     },
     "ARDUINO_NICLA_SENSE_ME": {
 
@@ -60,13 +63,23 @@
       "ble.ble-security-database-filesystem": false,
       "ble.ble-security-database-kvstore": false,
       "ble.ble-gap-host-based-private-address-resolution": false,
-      "ble.ble-gap-max-advertising-reports-pending-address-resolution": false
+      "ble.ble-gap-max-advertising-reports-pending-address-resolution": false,
+      "cordio.max-connections": 3
     },
     "RASPBERRY_PI_PICO": {
       // This allows use of Mbed TLS even on RP2040 which does not have a cryptographic RNG.
       // Application author is expected to provide overrides for reading & writing the seed:
       // https://github.com/arduino/ArduinoCore-mbed/pull/445/files
       "mbedtls.entropy-nv-seed": 1
+    },
+    "ARDUINO_GIGA": {
+      "target.macros_add": [
+        "METAL_INTERNAL",
+        "VIRTIO_DRIVER_ONLY",
+        "NO_ATOMIC_64_SUPPORT",
+        "METAL_MAX_DEVICE_REGIONS=2",
+        "RPMSG_BUFFER_SIZE=512"
+      ]
     }
   }
 }

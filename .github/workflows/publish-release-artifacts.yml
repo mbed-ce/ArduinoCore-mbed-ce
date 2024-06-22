@@ -6,6 +6,12 @@ on:
 permissions:
   contents: write
 
+
+# This workflow run fires whenever a tag is created, and downloads all compiled cores and publishes them
+# as part of the release.
+# It does have one limitation: you have to manually ensure this workflow gets run after all the build-core
+# workflow runs are completed.  I couldn't find a way to make it wait automatically.
+
 jobs:
   release:
     name: Create Release with Artifacts

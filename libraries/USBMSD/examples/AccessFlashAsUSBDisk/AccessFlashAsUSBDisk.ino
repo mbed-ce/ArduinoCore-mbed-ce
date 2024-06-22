@@ -36,7 +36,7 @@ void setup() {
   MassStorage.begin();
 }
 
-void printDirectory(char* name) {
+void printDirectory(char const * name) {
   DIR *d;
   struct dirent *p;
 
