@@ -43,7 +43,6 @@ if("ARDUINO_NICLA_SENSE_ME" IN_LIST MBED_TARGET_LABELS)
 endif()
 
 if("STM32H747_ARDUINO" IN_LIST MBED_TARGET_LABELS)
-	add_subdirectory(Portenta_SDRAM)
 	add_subdirectory(STM32H747_System)
 endif()
 
@@ -51,6 +50,8 @@ if("ARDUINO_GIGA" IN_LIST MBED_TARGET_LABELS)
 	add_subdirectory(MRI)
 	add_subdirectory(ea_malloc)
 	add_subdirectory(PDM)
+	add_subdirectory(WiFi)
+	add_subdirectory(Portenta_SDRAM)
 endif()
 
 # Libraries for all targets

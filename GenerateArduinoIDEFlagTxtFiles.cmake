@@ -39,6 +39,13 @@ foreach(INCLUDE_DIR ${SCANNED_INCLUDE_DIRS})
 	# (so it starts with the first path component after mbed-os/)
 	cmake_path(RELATIVE_PATH INCLUDE_DIR BASE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/mbed-os OUTPUT_VARIABLE REL_INCLUDE_DIR)
 
+	# There is a conflict between Mbed and Arduino both providing SPI.h
+	# Remove this specific include path so that you must #include <drivers/SPI.h> to get the Mbed version
+	# from the Arduino IDE.
+	if(REL_INCLUDE_DIR STREQUAL "drivers/./include/drivers")
+		continue()
+	endif()
+
 	string(APPEND INCLUDES_TXT_CONTENTS "-iwithprefixbefore/mbed/${REL_INCLUDE_DIR}\n")
 endforeach()
 file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/includes.txt CONTENT ${INCLUDES_TXT_CONTENTS})

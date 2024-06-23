@@ -1,13 +1,5 @@
 #include "STM32H747_System.h"
 
-void setup() {  
-  Serial.begin(115200);
-  while (!Serial) {}
-
-  reset_reason_t resetReason = STM32H747::getResetReason();
-  Serial.println(getString(resetReason));
-}
-
 String getString(reset_reason_t val) {
   switch (val){
   case RESET_REASON_POWER_ON:
@@ -38,6 +30,15 @@ String getString(reset_reason_t val) {
     return "N/A";
   }
 }
+
+void setup() {
+  Serial.begin(115200);
+  while (!Serial) {}
+
+  reset_reason_t resetReason = STM32H747::getResetReason();
+  Serial.println(getString(resetReason));
+}
+
 
 void loop() {  
   delay(1000);

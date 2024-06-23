@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 uint8_t* bootloader_data = (uint8_t*)(0x801F000);
 uint8_t* bootloader_identification = (uint8_t*)(0x80002F0);
 
@@ -14,6 +16,12 @@ PortentaBoardInfo* boardInfo();
 OptaBoardInfo *info;
 OptaBoardInfo* boardInfo();
 #endif
+
+// Forward declarations
+void printBootloaderInfo();
+String getUSBSpeed(uint8_t flag);
+String getClockSource(uint8_t flag);
+String getRAMSize(uint8_t flag);
 
 void setup() {  
   Serial.begin(115200);

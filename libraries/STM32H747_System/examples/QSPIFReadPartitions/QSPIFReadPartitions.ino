@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <BlockDevice.h>
 
 struct __attribute__((packed)) mbrEntry {

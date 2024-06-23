@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 #include "FlashIAP.h"
 #include "QSPIFBlockDevice.h"
 #include "MBRBlockDevice.h"
@@ -37,6 +39,14 @@ uint8_t* bootloader_data = (uint8_t*)(BOOTLOADER_ADDR + bootloader_data_offset);
 
 const unsigned char* bootloader_ptr = &bootloader_bin[0];
 long bootloader_len = bootloader_bin_len;
+
+// Forward declarations
+void printBootloaderInfo();
+String getUSBSpeed(uint8_t flag);
+String getClockSource(uint8_t flag);
+String getRAMSize(uint8_t flag);
+bool waitResponse();
+void applyUpdate(uint32_t address);
 
 uint8_t* boardInfo();
 
