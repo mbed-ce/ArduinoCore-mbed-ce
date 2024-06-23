@@ -236,17 +236,6 @@ void arduino::WiFiClass::MACAddress(uint8_t *mac_address)
 
 #if defined(COMPONENT_4343W_FS)
 
-#define WIFI_FIRMWARE_PATH "/wlan/4343WA1.BIN"
-
-#if defined(CORE_CM4)
-#include "QSPIFBlockDevice.h"
-mbed::BlockDevice *mbed::BlockDevice::get_default_instance()
-{
-    static QSPIFBlockDevice default_bd(PD_11, PD_12, PE_2, PF_6,  PF_10, PG_6, QSPIF_POLARITY_MODE_1, 40000000);
-    return &default_bd;
-}
-#endif
-
 bool firmware_available = false;
 
 #include "wiced_filesystem.h"
@@ -268,40 +257,11 @@ void wiced_filesystem_firmware_error(void) {
   while (1) {}
 }
 
-wiced_result_t whd_firmware_check_hook(const char* mounted_name, int mount_err) {
-  DIR* dir;
-  struct dirent* ent;
-  String dir_name(mounted_name);
-  if (mount_err) {
-    wiced_filesystem_mount_error();
-  } else {
-    if ((dir = opendir(mounted_name)) != NULL) {
-      // print all the files and directories within directory
-      while ((ent = readdir(dir)) != NULL) {
-        String fullname = "/" + dir_name + "/" + String(ent->d_name);
-        if (fullname == WIFI_FIRMWARE_PATH) {
-          closedir(dir);
-          firmware_available = true;
-          return WICED_SUCCESS;
-        }
-      }
-      if (Serial) { Serial.println("File not found\n"); }
-      closedir(dir);
-    }
-    wiced_filesystem_firmware_error();
-  }
-  return WICED_ERROR;
-}
-
-
 #include "whd_version.h"
 const char* arduino::WiFiClass::firmwareVersion() {
-  if ((wiced_filesystem_init() != WICED_ERROR) && (wiced_filesystem_mount_default() != WICED_ERROR)) {
-    if (firmware_available) {
-      return WHD_VERSION;
-    }
-  }
-  return "v0.0.0";
+  // For now, we just keep it simple return the version of the firmware that is *supposed*
+  // to be installed.  This could be made more sophisticated later.
+  return WHD_VERSION;
 }
 
 arduino::WiFiClass WiFi(WiFiInterface::get_default_instance());

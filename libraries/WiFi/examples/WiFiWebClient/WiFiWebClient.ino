@@ -23,6 +23,8 @@ char ssid[] = SECRET_SSID;        // your network SSID (name)
 char pass[] = SECRET_PASS;        // your network password (use for WPA, or use as key for WEP)
 int keyIndex = 0;                 // your network key Index number (needed only for WEP)
 
+void printWifiStatus(); // forward declaration
+
 int status = WL_IDLE_STATUS;
 // if you don't want to use DNS (and reduce your sketch size)
 // use the numeric IP instead of the name for the server:
