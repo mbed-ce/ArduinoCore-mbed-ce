@@ -41,18 +41,45 @@ void setup() {
   Serial.begin(115200);
   while (!Serial);
 
-  mbed::MBRBlockDevice::partition(&root, 1, 0x0B, 0, 1024 * 1024);
-  // use space from 15.5MB to 16 MB for another fw, memory mapped
+  int err;
+  if((err = root.init()) != 0) {
+    Serial.print("Failed to init QSPI flash. Error ");
+    Serial.println(err);
+    while(true) {}
+  }
 
-  int err =  wifi_data_fs.mount(&wifi_data);
+  // use space from 15.5MB to 16 MB for another fw, memory mapped
+  err = mbed::MBRBlockDevice::partition(&root, 1, 0x0B, 0, 1024 * 1024);
+  if(err != 0) {
+    Serial.print("Failed to partition flash. Error ");
+    Serial.println(err);
+    while(true) {}
+  }
+
+  if((err = wifi_data.init()) != 0) {
+    Serial.print("Failed to init firmware partition. Error ");
+    Serial.println(err);
+    while(true) {}
+  }
+
+  err =  wifi_data_fs.mount(&wifi_data);
   if (err) {
     // Reformat if we can't mount the filesystem
     // this should only happen on the first boot
     Serial.println("No filesystem containing the WiFi firmware was found.");
+    Serial.print("Error: ");
+    Serial.print(err);
+    Serial.println("");
     Serial.println("Usually that means that the WiFi firmware has not been installed yet"
                   " or was overwritten with another firmware.\n");
     Serial.println("Formatting the filesystem to install the firmware and certificates...\n");
     err = wifi_data_fs.reformat(&wifi_data);
+
+    if(err != 0) {
+      Serial.print("Failed to reformat the filesystem. Error ");
+      Serial.println(err);
+      while(true) {}
+    }
   }
 
   DIR *dir;
@@ -152,6 +179,7 @@ void setup() {
   }
   fclose(fp);
 
+  wifi_data.sync();
   wifi_data_fs.unmount();
 
   Serial.println("\nFirmware and certificates updated!");

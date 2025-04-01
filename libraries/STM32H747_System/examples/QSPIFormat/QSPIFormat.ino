@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 #include "QSPIFBlockDevice.h"
 #include "MBRBlockDevice.h"
 #include "LittleFileSystem.h"

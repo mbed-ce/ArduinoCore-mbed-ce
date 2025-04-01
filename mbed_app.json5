@@ -27,8 +27,6 @@
       "platform.all-stats-enabled": true,
       "rtos.main-thread-stack-size": 32768,
 
-      "cordio.max-connections": 5,
-
       // Don't activate Mbed's USB console support; Arduino brings its own USB console system
       "target.console-usb": false,
       "target.console-uart": true,
@@ -72,6 +70,9 @@
       // https://github.com/arduino/ArduinoCore-mbed/pull/445/files
       "mbedtls.entropy-nv-seed": 1
     },
+    "ARDUINO_NANO33BLE": {
+      "cordio.max-connections": 5
+    },
     "ARDUINO_GIGA": {
       "target.macros_add": [
         "METAL_INTERNAL",
@@ -79,7 +80,32 @@
         "NO_ATOMIC_64_SUPPORT",
         "METAL_MAX_DEVICE_REGIONS=2",
         "RPMSG_BUFFER_SIZE=512"
-      ]
+      ],
+      "cordio.max-connections": 5,
+
+      // Access the wifi driver from the QSPI flash instead of including it (400kB) in the
+      // application image.
+      "target.wifi_driver_in_qspi_flash": true
+    },
+    "ARDUINO_PORTENTA_H7": {
+      "cordio.max-connections": 5,
+      "cellular.debug-at": true,
+      "cellular.offload-dns-queries": true,
+      "cellular.at-handler-buffer-size": 512,
+      "nsapi.dns-response-wait-time": 5000,
+      "nsapi.dns-total-attempts": 3,
+      "lwip.raw-socket-enabled": true,
+      "target.macros_add": [
+        "METAL_INTERNAL",
+        "VIRTIO_DRIVER_ONLY",
+        "NO_ATOMIC_64_SUPPORT",
+        "METAL_MAX_DEVICE_REGIONS=2",
+        "RPMSG_BUFFER_SIZE=512"
+      ],
+
+      // Access the wifi driver from the QSPI flash instead of including it (400kB) in the
+      // application image.
+      "target.wifi_driver_in_qspi_flash": true
     }
   }
 }

@@ -58,6 +58,9 @@ int led3 = LEDB;
 
 #endif
 
+void loop2();
+void loop3();
+
 void setup() {
   Serial.begin(9600);
 

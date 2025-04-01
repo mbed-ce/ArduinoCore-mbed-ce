@@ -7,10 +7,15 @@ cmake_policy(VERSION 3.20)
 # Note: This block must be before the include of app.cmake
 set(MBED_APP_JSON_PATH mbed_app.json5)
 
-include(mbed-os/tools/cmake/app.cmake)
-add_subdirectory(mbed-os)
+include(mbed-os/tools/cmake/mbed_toolchain_setup.cmake)
 
-project(ArduinoCore-mbed-ce VERSION 1.1.0) # This is the version of the Mbed CE Arduino core, not of Mbed CE
+project(ArduinoCore-mbed-ce
+		LANGUAGES C CXX ASM
+		VERSION 1.1.0) # This is the version of the Mbed CE Arduino core, not of Mbed CE
+
+include(mbed_project_setup)
+
+add_subdirectory(mbed-os)
 
 # Figure out variant name.  This is generally the same as the mbed target, but we need
 # to handle a few variations (e.g. the _SWD variants of the mbed targets)
@@ -22,6 +27,8 @@ elseif("ARDUINO_NICLA_SENSE_ME" IN_LIST MBED_TARGET_LABELS)
 	set(ARDUINO_VARIANT_NAME "ARDUINO_NICLA_SENSE_ME")
 elseif("ARDUINO_GIGA" IN_LIST MBED_TARGET_LABELS)
 	set(ARDUINO_VARIANT_NAME "ARDUINO_GIGA")
+elseif("ARDUINO_PORTENTA_H7_M7" IN_LIST MBED_TARGET_LABELS)
+	set(ARDUINO_VARIANT_NAME "ARDUINO_PORTENTA_H7_M7")
 else()
 	message(FATAL_ERROR "This MBED_TARGET is currently not supported by the arduino core!")
 endif()
@@ -106,7 +113,9 @@ endif()
 
 if("COMPONENT_QSPIF=1" IN_LIST MBED_TARGET_DEFINITIONS)
 	list(APPEND MBED_LIBS_TO_INSTALL
-		mbed-storage-qspif)
+		mbed-storage-qspif
+		# We need to put storage-blockdevice on the link line again because storage-qspif uses its symbols
+		mbed-storage-blockdevice)
 endif()
 
 # We also need to know about any precompiled .a files
@@ -190,5 +199,3 @@ set(CPACK_PACKAGE_FILE_NAME ${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION})
 set(CPACK_GENERATOR ZIP)
 
 include(CPack)
-
-mbed_finalize_build()

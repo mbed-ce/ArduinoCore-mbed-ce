@@ -52,4 +52,4 @@ nano33ble.bootloader.file=nano33ble/bootloader.hex
 nano33ble.debug.server.openocd.scripts.0=interface/{programmer.protocol}.cfg
 nano33ble.debug.server.openocd.scripts.1={programmer.transport_script}
 nano33ble.debug.server.openocd.scripts.2=target/nrf52.cfg
-nano33ble.debug.svd_file={runtime.platform.path}/svd/nrf52840.svd
+nano33ble.debug.svd_file={runtime.platform.path}/svd/STM32H747_CM7.svd

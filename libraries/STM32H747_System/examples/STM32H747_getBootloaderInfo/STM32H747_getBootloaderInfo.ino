@@ -18,6 +18,9 @@ OptaBoardInfo* boardInfo();
 #endif
 
 // Forward declarations
+#if defined(GET_PORTENTA_OTP_BOARD_INFO)
+void printPortentaSecureInfo();
+#endif
 void printBootloaderInfo();
 String getUSBSpeed(uint8_t flag);
 String getClockSource(uint8_t flag);
