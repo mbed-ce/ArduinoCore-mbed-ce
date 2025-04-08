@@ -11,7 +11,7 @@ include(mbed-os/tools/cmake/mbed_toolchain_setup.cmake)
 
 project(ArduinoCore-mbed-ce
 		LANGUAGES C CXX ASM
-		VERSION 1.1.1) # This is the version of the Mbed CE Arduino core, not of Mbed CE
+		VERSION 1.2.1) # This is the version of the Mbed CE Arduino core, not of Mbed CE
 
 include(mbed_project_setup)
 
