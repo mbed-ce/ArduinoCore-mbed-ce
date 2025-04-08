@@ -7,8 +7,8 @@ The CMake build scripts in this repo perform two distinct functions:
 
 ## Compiling an Arduino core for Mbed CE
 
-1. Set up the toolchain as [described](https://github.com/mbed-ce/mbed-os/wiki/Toolchain-Setup-Guide) in the Mbed CE wiki.
-2. Install Python dependencies.  On Ubuntu >=22.04, run `xargs apt-get install -y < mbed-os/tools/requirements.apt.txt`.  On other OSs, run `python3 -m pip install -r  mbed-os/tools/requirements.txt`.
+1. Clone the repo. Don't forget to clone with `--recursive` or run `git submodule update --init` after cloning!
+2. Set up the toolchain as [described](https://github.com/mbed-ce/mbed-os/wiki/Toolchain-Setup-Guide) in the Mbed CE wiki.
 3. Create a build directory and cd into it: `mkdir build && cd build`
 4. Configure CMake: `cmake .. -GNinja -DCMAKE_BUILD_TYPE=<Debug|Release> -DMBED_TARGET=<target> -DUPLOAD_METHOD=NONE`.  The DCMAKE_BUILD_TYPE may be set to Debug or Release to generate a debug or release build of the core.  The MBED_TARGET may be set to any supported target for this repo -- check the directory names under `variants/` to see each supported target.
 5. Build: `ninja`
