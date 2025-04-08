@@ -20,6 +20,8 @@
 #include <PortentaEthernet.h>
 #include <SPI.h>
 
+void connectEth();
+
 void setup()
 {
 

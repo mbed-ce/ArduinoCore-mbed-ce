@@ -23,6 +23,7 @@
  by Tom Igoe
  */
 
+#include <Arduino.h>
 #include <PortentaEthernet.h>
 #include <Ethernet.h>
 // the sensor communicates using SPI, so include the library:
@@ -52,6 +53,11 @@ const int chipSelectPin = 7;
 float temperature = 0.0;
 long pressure = 0;
 long lastReadingTime = 0;
+
+void getData();
+void listenForEthernetClients();
+void writeRegister(byte registerName, byte registerValue);
+unsigned int readRegister(byte registerName, int numBytes);
 
 void setup() {
 

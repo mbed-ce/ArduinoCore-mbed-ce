@@ -10,6 +10,7 @@ add_library(arduino-SocketWrapper STATIC ${SOCKETWRAPPER_SOURCES})
 target_link_libraries(arduino-SocketWrapper PUBLIC
 	arduino-core
 	mbed-netsocket-api
+	mbed-storage
 	mbed-storage-fat
 	mbed-storage-blockdevice)
 target_include_directories(arduino-SocketWrapper PUBLIC src)

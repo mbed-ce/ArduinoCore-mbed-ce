@@ -60,6 +60,7 @@ if("ARDUINO_PORTENTA_H7" IN_LIST MBED_TARGET_LABELS)
 	add_subdirectory(ThreadDebug)
 	add_subdirectory(USBAudio)
 	add_subdirectory(KernelDebug)
+	add_subdirectory(Ethernet)
 	# TODO add missing libraries for Portenta
 #   add_subdirectory(PDM)
 #	add_subdirectory(Arduino_H7_Video)

@@ -24,6 +24,8 @@ IPAddress myDns(192, 168, 0, 1);
 unsigned long lastConnectionTime = 0; // last time you connected to the server, in milliseconds
 const unsigned long postingInterval = 10 * 1000; // delay between updates, in milliseconds
 
+void httpRequest();
+
 void setup()
 {
 

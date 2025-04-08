@@ -34,6 +34,9 @@ byte packetBuffer[NTP_PACKET_SIZE]; //buffer to hold incoming and outgoing packe
 // A UDP instance to let us send and receive packets over UDP
 EthernetUDP Udp;
 
+void connectEth();
+void sendNTPpacket(const char * address);
+
 void setup() {
 
   // Open serial communications and wait for port to open:

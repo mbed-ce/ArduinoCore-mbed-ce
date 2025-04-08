@@ -11,7 +11,7 @@ include(mbed-os/tools/cmake/mbed_toolchain_setup.cmake)
 
 project(ArduinoCore-mbed-ce
 		LANGUAGES C CXX ASM
-		VERSION 1.1.0) # This is the version of the Mbed CE Arduino core, not of Mbed CE
+		VERSION 1.1.1) # This is the version of the Mbed CE Arduino core, not of Mbed CE
 
 include(mbed_project_setup)
 
@@ -63,8 +63,11 @@ set(MBED_LIBS_TO_INSTALL
 
 	# Networking
 	mbed-lwipstack
+	mbed-ppp
 	mbed-netsocket-api
+	mbed-nanostack-libservice
 	mbed-mbedtls
+	mbed-randlib
 
 	# Storage / Block Device
 	mbed-storage
@@ -117,6 +120,12 @@ if("COMPONENT_QSPIF=1" IN_LIST MBED_TARGET_DEFINITIONS)
 		# We need to put storage-blockdevice on the link line again because storage-qspif uses its symbols
 		mbed-storage-blockdevice)
 endif()
+
+if("DEVICE_EMAC=1" IN_LIST MBED_TARGET_DEFINITIONS)
+	list(APPEND MBED_LIBS_TO_INSTALL
+		mbed-emac)
+endif()
+
 
 # We also need to know about any precompiled .a files
 # under variants/xxx/libs

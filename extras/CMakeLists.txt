@@ -1,5 +1,6 @@
 # Install Arduino API and make a build system target for it
 set(ARDUINO_API_SOURCES
+	ArduinoCore-API/api/Common.cpp
 	ArduinoCore-API/api/CanMsg.cpp
 	ArduinoCore-API/api/CanMsgRingbuffer.cpp
 	ArduinoCore-API/api/IPAddress.cpp

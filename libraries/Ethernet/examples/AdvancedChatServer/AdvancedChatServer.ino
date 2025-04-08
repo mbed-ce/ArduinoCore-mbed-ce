@@ -19,6 +19,7 @@
 
  */
 
+#include <Arduino.h>
 #include <SPI.h>
 #include <PortentaEthernet.h>
 #include <Ethernet.h>

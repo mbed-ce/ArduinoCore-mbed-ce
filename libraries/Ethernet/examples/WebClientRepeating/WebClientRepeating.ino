@@ -39,6 +39,8 @@ char server[] = "www.arduino.cc";  // also change the Host line in httpRequest()
 unsigned long lastConnectionTime = 0;           // last time you connected to the server, in milliseconds
 const unsigned long postingInterval = 10*1000;  // delay between updates, in milliseconds
 
+void httpRequest();
+
 void setup() {
 
 
