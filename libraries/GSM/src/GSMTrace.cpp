@@ -17,13 +17,14 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include <Arduino.h>
 #include <mbed.h>
 #include <GSM.h>
 
 #if MBED_CONF_MBED_TRACE_ENABLE
 
 static Stream* trace_stream = nullptr;
-static PlatformMutex trace_mutex;
+static rtos::Mutex trace_mutex;
 static char trace_timestamp[8];
 
 static void trace_wait() {

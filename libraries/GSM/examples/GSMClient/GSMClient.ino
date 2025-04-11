@@ -27,7 +27,7 @@ void setup() {
   //GSM.setTraceLevel(4);
 
   Serial.println("Starting Carrier Network registration");
-  if(!GSM.begin(pin, apn, username, pass, CATNB, BAND_20 | BAND_19)){
+  if(!GSM.begin(pin, apn, username, pass, CATNB)){
     Serial.println("The board was not able to register to the network...");
     // do nothing forevermore:
     while(1);

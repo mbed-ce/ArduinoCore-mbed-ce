@@ -4,3 +4,6 @@
 [submodule "mbed-os"]
 	path = mbed-os
 	url = https://github.com/mbed-ce/mbed-os.git
+[submodule "libraries/GPS/MicroNMEA"]
+	path = libraries/GPS/MicroNMEA
+	url = https://github.com/stevemarple/MicroNMEA.git

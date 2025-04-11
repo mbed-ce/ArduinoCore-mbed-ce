@@ -51,7 +51,7 @@ public:
 private:
   void api_lock();
   void api_unlock();
-  PlatformMutex _mutex;
+  rtos::Mutex _mutex;
   bool _cmuxFlag = false;
   int id;
   mbed::CircularBuffer<char, 1500> rx_buffer;

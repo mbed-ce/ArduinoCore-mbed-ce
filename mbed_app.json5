@@ -103,6 +103,12 @@
         "RPMSG_BUFFER_SIZE=512"
       ],
 
+      // Enable cellular drivers, needed for GSM library to compile
+      "target.components_add": [
+        "GEMALTO_CINTERION",
+        "GENERIC_AT3GPP"
+      ],
+
       // Access the wifi driver from the QSPI flash instead of including it (400kB) in the
       // application image.
       "target.wifi_driver_in_qspi_flash": true

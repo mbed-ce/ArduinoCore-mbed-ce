@@ -29,7 +29,7 @@
 
 #include "platform/FileHandle.h"
 #include "drivers/InterruptIn.h"
-#include "platform/PlatformMutex.h"
+#include "rtos/Mutex.h"
 #include "platform/CircularBuffer.h"
 #include "platform/NonCopyable.h"
 
@@ -101,7 +101,7 @@ private:
     void api_lock(void);
     void api_unlock(void);
 
-    PlatformMutex _mutex;
+    rtos::Mutex _mutex;
     bool _blocking = true;
     void wake(void);
 

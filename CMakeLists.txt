@@ -11,7 +11,7 @@ include(mbed-os/tools/cmake/mbed_toolchain_setup.cmake)
 
 project(ArduinoCore-mbed-ce
 		LANGUAGES C CXX ASM
-		VERSION 1.2.1) # This is the version of the Mbed CE Arduino core, not of Mbed CE
+		VERSION 1.3.0) # This is the version of the Mbed CE Arduino core, not of Mbed CE
 
 include(mbed_project_setup)
 
@@ -81,6 +81,9 @@ set(MBED_LIBS_TO_INSTALL
 	mbed-storage-littlefs-v2
 	mbed-storage-securestore
 	mbed-storage-tdbstore
+
+	# Cellular
+	mbed-cellular
 )
 
 if("DEVICE_USBDEVICE=1" IN_LIST MBED_TARGET_DEFINITIONS)

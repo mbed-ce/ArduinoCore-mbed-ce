@@ -30,7 +30,6 @@
 arduino::CMUXClass *arduino::CMUXClass::get_default_instance()
 {
   static mbed::UnbufferedSerial serial(MBED_CONF_GEMALTO_CINTERION_TX, MBED_CONF_GEMALTO_CINTERION_RX, 115200);
-  serial.set_flow_control(mbed::SerialBase::RTSCTS_SW, MBED_CONF_GEMALTO_CINTERION_CTS, NC);
   static arduino::CMUXClass device(&serial);
   return &device;
 }
@@ -40,11 +39,10 @@ mbed::CellularDevice *mbed::CellularDevice::get_default_instance()
   static auto cmux = arduino::CMUXClass::get_default_instance();
   static mbed::GEMALTO_CINTERION device(cmux->get_serial(0));
   nextSerialPort++;
-  device.enableCMUXChannel = mbed::callback(cmux, &arduino::CMUXClass::enableCMUXChannel);
   return &device;
 }
 
-int arduino::GSMClass::begin(const char* pin, const char* apn, const char* username, const char* password, RadioAccessTechnologyType rat, uint32_t band, bool restart) {
+int arduino::GSMClass::begin(const char* pin, const char* apn, const char* username, const char* password, mbed::RadioAccessTechnologyType rat, bool restart) {
 
   if (restart || isCmuxEnable()) {
     reset();
@@ -61,7 +59,7 @@ int arduino::GSMClass::begin(const char* pin, const char* apn, const char* usern
 
   static mbed::DigitalOut rts(MBED_CONF_GEMALTO_CINTERION_RTS, 0);
 
-  _device = _context->get_device();
+  _device = reinterpret_cast<mbed::GEMALTO_CINTERION *>(_context->get_device());
   _device->modem_debug_on(_at_debug);
 
   if (!isReady()) {
@@ -69,11 +67,15 @@ int arduino::GSMClass::begin(const char* pin, const char* apn, const char* usern
     return 0;
   }
 
-  _device->set_cmux_status_flag(_cmuxGSMenable);
   _device->set_retry_timeout_array(_retry_timeout, sizeof(_retry_timeout) / sizeof(_retry_timeout[0]));
 #if GSM_DEBUG_ENABLE
   _device->attach(mbed::callback(this, &GSMClass::onStatusChange));
 #endif
+
+  if (_cmuxGSMenable) {
+    _device->enable_cmux();
+    CMUXClass::get_default_instance()->enableCMUXChannel();
+  }
   _device->init();
 
   _pin = pin;
@@ -81,13 +83,11 @@ int arduino::GSMClass::begin(const char* pin, const char* apn, const char* usern
   _username = username;
   _password = password;
   _rat = rat;
-  _band = (FrequencyBand) band;
 
   _context->set_sim_pin(pin);
   _context->set_authentication_type(mbed::CellularContext::AuthenticationType::PAP);
   _context->set_credentials(_apn, _username, _password);
   _context->set_access_technology(_rat);
-  _context->set_band(_band);
 
   int connect_status = NSAPI_ERROR_AUTH_FAILURE;
 
@@ -132,9 +132,9 @@ unsigned long arduino::GSMClass::getLocalTime()
   return _device->get_local_time();
 }
 
-bool arduino::GSMClass::setTime(unsigned long const epoch, int const timezone)
+void arduino::GSMClass::setTime(unsigned long const epoch, int const timezone)
 {
-  return _device->set_time(epoch, timezone);
+  _device->set_time(epoch, timezone);
 }
 
 bool arduino::GSMClass::isConnected()

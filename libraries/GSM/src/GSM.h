@@ -71,7 +71,7 @@ class GSMClass : public MbedSocketClass {
 public:
 
   GSMClass()
-    : _rat(CATNB) {
+    : _rat(mbed::CATNB) {
       if(_CMUX_ENABLE){
         arduino::GSMClass::enableCmux();
       }
@@ -88,7 +88,7 @@ public:
      * 
      * return: 0 in case of success, negative number in case of failure
      */
-  int begin(const char* pin, const char* apn, const char* username, const char* password, RadioAccessTechnologyType rat = CATNB, uint32_t band = BAND_20, bool restart = true);
+  int begin(const char* pin, const char* apn, const char* username, const char* password, mbed::RadioAccessTechnologyType rat = mbed::CATNB, bool restart = true);
 
   /*
      * Disconnect from the network
@@ -103,7 +103,7 @@ public:
 
   unsigned long getLocalTime();
 
-  bool setTime(unsigned long const epoch, int const timezone = 0);
+  void setTime(unsigned long const epoch, int const timezone = 0);
   void enableCmux();
   bool isCmuxEnable();
 #if MBED_CONF_MBED_TRACE_ENABLE
@@ -126,11 +126,10 @@ private:
   const char* _username = nullptr;
   const char* _password = nullptr;
   bool _cmuxGSMenable = _CMUX_ENABLE;
-  RadioAccessTechnologyType _rat;
-  FrequencyBand _band;
+  mbed::RadioAccessTechnologyType _rat;
   NetworkInterface* gsm_if = nullptr;
   mbed::CellularContext* _context = nullptr;
-  mbed::CellularDevice* _device = nullptr;
+  mbed::GEMALTO_CINTERION* _device = nullptr;
   bool _at_debug = false;
 
   /* Internal cellular state machine retries. Values are in seconds.

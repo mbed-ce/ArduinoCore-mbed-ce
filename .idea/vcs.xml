@@ -2,9 +2,11 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cmake-build-develop-rpi-pico/_deps/greentea-client-src" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/extras/ArduinoCore-API" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/mbed-os" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/mbed-os/tools/doxygen-awesome-css" vcs="Git" />
+  </component>
+  <component name="VcsProjectSettings">
+    <option name="detectVcsMappingsAutomatically" value="false" />
   </component>
 </project>

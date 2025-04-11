@@ -23,6 +23,10 @@
 #include "GSM.h"
 #include "MbedClient.h"
 
+// Bring these into the global scope
+using mbed::RadioAccessTechnologyType::CATNB;
+using mbed::RadioAccessTechnologyType::CATM1;
+
 namespace arduino {
 
 class GSMClient : public MbedClient {
