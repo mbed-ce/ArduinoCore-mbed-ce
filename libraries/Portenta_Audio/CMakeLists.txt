@@ -1,0 +1,11 @@
+if(MBED_CPU_CORE MATCHES "Cortex-M7")
+    set(LIBPDMFILTER_PATH src/cortex-m7/libPDMFilter_CM7_GCC_wc32.a)
+elseif(MBED_CPU_CORE MATCHES "Cortex-M4")
+    set(LIBPDMFILTER_PATH src/cortex-m4/libPDMFilter_CM4_GCC_wc32_softfp.a)
+else()
+    message(FATAL_ERROR "No libPDMFilter prebuilt library for CPU core ${MBED_CPU_CORE}!")
+endif()
+
+add_library(arduino-Portenta_Audio IMPORTED GLOBAL STATIC)
+set_property(TARGET arduino-Portenta_Audio PROPERTY IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/${LIBPDMFILTER_PATH})
+target_include_directories(arduino-Portenta_Audio INTERFACE src)

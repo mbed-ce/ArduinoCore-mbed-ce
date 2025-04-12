@@ -49,8 +49,10 @@ static volatile uint32_t xfer_status = 0;
 //int8_t* PDM_BUFFER = (uint16_t*)0x38000000;
 uint8_t PDM_BUFFER[PDM_BUFFER_SIZE] __attribute__ ((section(".pdm_buffer")));
 
+// Defined in PDM.cpp
 void PDMIrqHandler(bool halftranfer);
 void PDMsetBufferSize(int size);
+size_t PDMgetBufferSize();
 
 void AUDIO_SAI_DMA_IRQHandler(void)
 {

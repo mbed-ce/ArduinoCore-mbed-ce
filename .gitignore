@@ -3,4 +3,7 @@ cores/arduino/api*
 **/.vscode/
 **/.development
 .DS_Store
+
+# CLion
 cmake-build-*/
+.idea/runConfigurations

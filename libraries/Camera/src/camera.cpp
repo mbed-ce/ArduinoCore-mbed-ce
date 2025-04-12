@@ -20,6 +20,7 @@
 #include "camera.h"
 #include "Wire.h"
 #include "stm32h7xx_hal_dcmi.h"
+#include "stm_dma_utils.h"
 
 // Workaround for the broken UNUSED macro.
 #undef UNUSED
@@ -73,10 +74,11 @@ arduino::MbedI2C CameraWire(I2C_SDA1, I2C_SCL1);
 
 #define DCMI_IRQ_PRI                NVIC_EncodePriority(NVIC_PRIORITYGROUP_4, 2, 0)
 
-#define DCMI_DMA_CLK_ENABLE()       __HAL_RCC_DMA2_CLK_ENABLE()
-#define DCMI_DMA_STREAM             DMA2_Stream3
-#define DCMI_DMA_IRQ                DMA2_Stream3_IRQn
-#define DCMI_DMA_IRQ_PRI            NVIC_EncodePriority(NVIC_PRIORITYGROUP_4, 3, 0)
+const static DMALinkInfo dcmiDMALink{
+    .dmaIdx = 2,
+    .channelIdx = 3,
+    .sourceNumber = DMA_REQUEST_DCMI
+};
 
 // DCMI GPIO pins struct
 static const struct { GPIO_TypeDef *port; uint16_t pin; } dcmi_pins[] = {
@@ -121,7 +123,6 @@ static const struct { GPIO_TypeDef *port; uint16_t pin; } dcmi_pins[] = {
 #define NUM_DCMI_PINS   (sizeof(dcmi_pins)/sizeof(dcmi_pins[0]))
 
 static TIM_HandleTypeDef  htim  = {0};
-static DMA_HandleTypeDef  hdma  = {0};
 static DCMI_HandleTypeDef hdcmi = {0};
 
 /// Table to store the amount of bytes per pixel for each pixel format
@@ -207,8 +208,7 @@ void HAL_DCMI_MspDeInit(DCMI_HandleTypeDef* hdcmi)
     // Disable DCMI IRQs.
     HAL_NVIC_DisableIRQ(DCMI_IRQn);
 
-    // Disable DMA IRQs.
-    HAL_NVIC_DisableIRQ(DCMI_DMA_IRQ);
+    stm_free_dma_link(&dcmiDMALink);
 
     // Deinit the DMA stream.
     if (hdcmi->DMA_Handle != NULL) {
@@ -270,29 +270,7 @@ __weak int camera_extclk_config(int frequency)
 uint8_t camera_dcmi_config(bool bsm_skip)
 {
     // DMA Stream configuration
-    hdma.Instance                 = DCMI_DMA_STREAM;
-    hdma.Init.Request             = DMA_REQUEST_DCMI;
-    hdma.Init.Direction           = DMA_PERIPH_TO_MEMORY;
-    hdma.Init.MemInc              = DMA_MINC_ENABLE;
-    hdma.Init.PeriphInc           = DMA_PINC_DISABLE;
-    hdma.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-    hdma.Init.MemDataAlignment    = DMA_MDATAALIGN_WORD;
-    hdma.Init.Mode                = DMA_NORMAL;
-    hdma.Init.Priority            = DMA_PRIORITY_HIGH;
-    hdma.Init.FIFOMode            = DMA_FIFOMODE_DISABLE;
-    hdma.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
-    hdma.Init.MemBurst            = DMA_MBURST_INC4;
-    hdma.Init.PeriphBurst         = DMA_PBURST_SINGLE;
-
-    // Enable DMA clock
-    DCMI_DMA_CLK_ENABLE();
-
-    // Initialize the DMA stream
-    HAL_DMA_Init(&hdma);
-
-    // Configure and enable DMA IRQ Channel
-    NVIC_SetPriority(DCMI_DMA_IRQ, DCMI_DMA_IRQ_PRI);
-    HAL_NVIC_EnableIRQ(DCMI_DMA_IRQ);
+    DMA_HandleTypeDef * handle = stm_init_dma_link(&dcmiDMALink, DMA_PERIPH_TO_MEMORY, false, true, 4, 4, DMA_NORMAL);
 
     // Configure the DCMI interface.
     hdcmi.Instance              = DCMI;
@@ -309,7 +287,7 @@ uint8_t camera_dcmi_config(bool bsm_skip)
     hdcmi.Init.LineSelectStart  = DCMI_OELS_ODD;    // Ignored, unless LSM != ALL
 
     // Link the DMA handle to the DCMI handle.
-    __HAL_LINKDMA(&hdcmi, DMA_Handle, hdma);
+    __HAL_LINKDMA(&hdcmi, DMA_Handle, *handle);
 
     // Initialize the DCMI
     HAL_DCMI_Init(&hdcmi);
@@ -325,12 +303,6 @@ void DCMI_IRQHandler(void)
 {
     HAL_DCMI_IRQHandler(&hdcmi);
 }
-
-void DMA2_Stream3_IRQHandler(void)
-{
-    HAL_DMA_IRQHandler(&hdma);
-}
-
 } // extern "C"
 
 FrameBuffer::FrameBuffer(int32_t x, int32_t y, int32_t bpp) : 

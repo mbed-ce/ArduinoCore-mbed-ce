@@ -20,7 +20,7 @@
 
 #include "mbed.h"
 #include "BlockDevice.h"
-#include "platform/PlatformMutex.h"
+#include "rtos/Mutex.h"
 #include "BSP.h"
 
 //using namespace mbed;
@@ -180,7 +180,7 @@ private:
     BSP_SD_CardInfo _current_card_info;
     uint8_t _sd_state;
     uint32_t _timeout;
-    PlatformMutex _mutex;
+    rtos::Mutex _mutex;
     bool _is_initialized;
 
     virtual void

@@ -9,6 +9,7 @@
 
   This example code is in the public domain.
 */
+#include <Arduino.h>
 #include "SDMMCBlockDevice.h"
 #include "FATFileSystem.h"
 

@@ -9,4 +9,6 @@ target_include_directories(arduino-Portenta_SDCARD PUBLIC src)
 
 build_arduino_examples(Portenta_SDCARD examples)
 
+target_link_libraries(Portenta_SDCARD-example-TestSDCARD mbed-storage-fat)
+
 install(DIRECTORY . DESTINATION libraries/Portenta_SDCARD)

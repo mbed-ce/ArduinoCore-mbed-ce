@@ -19,6 +19,11 @@ endif()
 
 add_library(arduino-PDM STATIC ${PDM_SOURCES})
 target_link_libraries(arduino-PDM PUBLIC arduino-core)
+
+if("ARDUINO_PORTENTA_H7" IN_LIST MBED_TARGET_LABELS)
+	target_link_libraries(arduino-PDM PUBLIC arduino-Portenta_Audio)
+endif()
+
 target_include_directories(arduino-PDM PUBLIC src)
 
 build_arduino_examples(PDM examples)
